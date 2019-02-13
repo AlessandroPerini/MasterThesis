@@ -1,7 +1,7 @@
-#import pandas as pd
-#import prova
+import pandas as pd
+import prova
 from prova import DBConnection
-#from prettytable import PrettyTable
+from prettytable import PrettyTable
 
 connection = DBConnection()
 connection.database_connection()
@@ -11,9 +11,5 @@ print(result)
 
 # Per stampare solo una colonna dei risultati
 column = 'id'
-column_list = [item[column] for item in result]
-print(column_list)
-
-column = 'Age'
 column_list = [item[column] for item in result]
 print(column_list)
