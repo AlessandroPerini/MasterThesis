@@ -1,6 +1,6 @@
 #import pandas as pd
 #import prova
-from prova import DBConnection
+from databaseConnection import DBConnection
 #from prettytable import PrettyTable
 
 connection = DBConnection()
