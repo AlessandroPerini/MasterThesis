@@ -17,9 +17,10 @@ class DBConnection(object):
                                    cursorclass=pymysql.cursors.DictCursor)
             self.connection = conn
             self.connected = True
-            print('\n Connessione OK! \n')
-        except:
-            print("Problema di connessione")
+            print('\n Database connected! \n')
+        except ValueError as ve:
+            print(ve)
+            print("Connection problem!")
 
     def query(self, query):
         if self.connected:
@@ -30,7 +31,17 @@ class DBConnection(object):
                     cursor.execute(sql)
                     result = cursor.fetchall()
                     return result
-            finally:
-                self.connection.close()
+            except ValueError as ve:
+                print(ve)
+
         else:
-            print("Connessione non aperta")
+            print("Database is not connected")
+
+    def return_connection(self):
+        if self.connected:
+            return self.connection
+
+    def close_connection(self):
+        if self.connected:
+            self.connected = False
+            self.connection.close()

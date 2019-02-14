@@ -1,19 +1,14 @@
-#import pandas as pd
-#import prova
 from databaseConnection import DBConnection
-#from prettytable import PrettyTable
+from tabulate import tabulate
 
 connection = DBConnection()
 connection.database_connection()
 query = "SELECT * FROM censusdata limit 5"
 result = connection.query(query)
-print(result)
+print(tabulate(result, tablefmt="fancy_grid"))
 
-# Per stampare solo una colonna dei risultati
-column = 'id'
-column_list = [item[column] for item in result]
-print(column_list)
+# Per estrarre una colonna dei risultati
+column_id = [item['id'] for item in result]
+column_Age = [item['Age'] for item in result]
 
-column = 'Age'
-column_list = [item[column] for item in result]
-print(column_list)
+connection.close_connection()
