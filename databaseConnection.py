@@ -1,7 +1,7 @@
 import pymysql.cursors
 
 
-class DBConnection(object):
+class DBConnection:
 
     def __init__(self):
         self.connected = False
