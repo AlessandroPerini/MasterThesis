@@ -30,4 +30,9 @@ print(classifier)
 headers = list(encoded.columns.values)
 Utility().tree_printer(classifier, headers)
 
+"Prova creazione vettore y"
+queryx = connection.query("select * from censusdata where id < 5")
+queryy = connection.query("select * from censusdata where id = 1 or id = 3")
+Utility().y_creator(pd.DataFrame(queryx), pd.DataFrame(queryy))
+
 connection.close_connection()

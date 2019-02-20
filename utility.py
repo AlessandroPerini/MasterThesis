@@ -1,4 +1,5 @@
 from pydotplus import pydotplus
+from sklearn import tree
 import collections
 from sklearn import tree
 
@@ -29,6 +30,20 @@ class Utility:
                     dest.set_fillcolor(colors[i])
 
             graph.write_png('tree.png')
+            print("Printed!")
 
         except ValueError as ve:
-            print(ve)
+            print("Tree not printed!" + ve)
+
+    @staticmethod
+    def y_creator(dataframe_x, dataframe_y):
+
+        y = [0] * dataframe_x.shape[0]
+        count = 0
+
+        for row in range(dataframe_x.shape[0]):
+            if dataframe_x.iloc[row] == dataframe_y.iloc[count]:
+                y[row] = 1
+                count = count + 1
+
+        return y
