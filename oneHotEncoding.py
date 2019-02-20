@@ -1,4 +1,3 @@
-
 from databaseConnection import DBConnection
 from tabulate import tabulate
 from sklearn.tree import DecisionTreeClassifier
@@ -9,57 +8,45 @@ import pandas as pd
 from sklearn import tree
 from utility import Utility
 
-connection = DBConnection()
-connection.database_connection()
 
-connection = DBConnection()
-connection.database_connection()
-query = "SELECT  age, race FROM censusdata limit 10"
-result = connection.query(query)
-#print(tabulate(result,  tablefmt="fancy_grid"))
+class OneHotEncoding:
 
+    def encoder(self, data_frame):
 
-the_frame = pd.DataFrame(result)
+        try:
 
-print(the_frame)
-print(the_frame.dtypes)
+            result = pd.DataFrame()
 
-#print(the_frame.head(2))               #prime righe della table
-#print(the_frame.tail(2))               #ultime righe della table
-#print(the_frame.index)
-#print(the_frame.sort_values(by='age'))      #ordina table per value
+            for column in data_frame.columns:
 
-X = the_frame[["race"]]
-y = [0,1,0,1,0,1,1,1,1,1]         #sopra i 50 anni
+                temp_df = pd.DataFrame(data_frame[column])
 
-race = the_frame.race.unique()
-print(race)
+                if data_frame[column].dtype == np.int64:
 
-#selezionare in automatico colonne non int e farne il onehot encoding
+                    result = pd.concat([result, temp_df], axis=1)
 
-enc = preprocessing.OneHotEncoder(categories=[race])
-encoded = enc.fit_transform(X).toarray()
-print(encoded)
-#print(enc.inverse_transform(encoded))          #ritrasforma con valori iniziali
+                else:
 
-print(the_frame)
-the_frame = the_frame.drop(columns=['race'])
-print(the_frame)
+                    if len(data_frame[column].unique()) <= 5:
 
-encoded_data_frame = pd.DataFrame(encoded)
-encoded_data_frame.columns = race
+                        result = pd.concat([result, self.one_hot_encoding(data_frame[column])], axis=1)
 
-print(encoded_data_frame)
+            return result
 
-the_frame = pd.concat([the_frame, encoded_data_frame], axis=1)
+        except ValueError as ve:
+            print(ve)
+            print("dataFrame non valido")
 
-print(the_frame)
+    @staticmethod
+    def one_hot_encoding(column):
 
-classifier = tree.DecisionTreeClassifier()
-classifier.fit(the_frame, y)
-print(classifier)
+        try:
+            column_names = column.unique()
+            encoder = preprocessing.OneHotEncoder(categories=[column_names])
+            result = pd.DataFrame(encoder.fit_transform(pd.DataFrame(column)).toarray())
+            result.columns = column_names
+            return result
 
-headers = list(the_frame.columns.values)
-print(headers)
-
-Utility().tree_printer(classifier, headers)
+        except ValueError as ve:
+            print(ve)
+            print("colonna non valida")
