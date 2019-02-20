@@ -1,11 +1,12 @@
 from pydotplus import pydotplus
 import collections
+from sklearn import tree
 
 
 class Utility:
 
     @staticmethod
-    def tree_printer(tree, classifier, features):
+    def tree_printer(classifier, features):
 
         try:
             dot_data = tree.export_graphviz(classifier,
