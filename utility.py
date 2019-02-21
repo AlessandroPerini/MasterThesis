@@ -3,6 +3,7 @@ from sklearn import tree
 import collections
 from sklearn import tree
 import numpy as np
+import pandas as pd
 
 
 class Utility:
@@ -64,4 +65,26 @@ class Utility:
                     y[r] = 0
 
         return y
+
+    @staticmethod
+    def transform_y_to_all_results(dataframe_x, dataframe_results):
+        result = pd.DataFrame()
+        for row in range(dataframe_results.shape[0]):
+
+            new_rows = dataframe_x
+
+            for column in range(len(dataframe_results.columns)):
+
+                new_rows = new_rows[(new_rows[dataframe_results.columns.values[column]] == dataframe_results.iloc[row, column])]
+
+            new_rows['tupleset'] = [row] * new_rows.shape[0]
+
+            if new_rows.shape[0] == 1:
+                new_rows['isfree?'] = [0] * new_rows.shape[0]
+            else:
+                new_rows['isfree?'] = [1] * new_rows.shape[0]
+
+            result = pd.concat([result, new_rows], axis=0)
+
+        return result
 

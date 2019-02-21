@@ -17,11 +17,12 @@ print('ecco le tuple: \n ' + tabulate(table, tablefmt="fancy_grid"))
 column_id = [item['id'] for item in result]
 column_Age = [item['Age'] for item in result"""
 
-#y=[0,1,1,1,0,1,0,0,1,0]
+df_x = pd.DataFrame(connection.query("select * from censusdata where id < 200"))
+df_y = pd.DataFrame(connection.query("select race,age,sex from censusdata where id = 3 or id = 4 or id = 5 or id = 6"))
+print(Utility().transform_y_to_all_results(df_x, df_y))
 
-"Prova creazione vettore y"
-df_x = pd.DataFrame(connection.query("select * from censusdata where id < 5"))
-df_y = pd.DataFrame(connection.query("select * from censusdata where id = 3 or id = 4"))
+
+"""
 y = Utility().y_creator(df_x, df_y)
 
 encod = OneHotEncoding()
@@ -35,5 +36,6 @@ print(classifier)
 
 headers = list(encoded.columns.values)
 Utility().tree_printer(classifier, headers)
+"""
 
 connection.close_connection()
