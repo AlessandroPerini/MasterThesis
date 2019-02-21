@@ -38,33 +38,30 @@ class Utility:
 
     @staticmethod
     def y_creator(dataframe_x, dataframe_y):
+        """
+        :param dataframe_x: main dataframe
+        :param dataframe_y: dataframe with tuples that are congruent with the result
+        :return: y vector
 
+        Note: dataframe_x and dataframe_y must have the same number of parameters (column)
+        and their tuples must be ordered in the same way.
+        """
         col = len(dataframe_x.columns)
         y = [1] * dataframe_x.shape[0]
         count = 0
 
         for row in range(dataframe_x.shape[0]):
-            print('row:')
-            print(row)
             if count < dataframe_y.shape[0]:
-
                 for c in range(col):
-
                     if dataframe_x.iloc[row, c] != dataframe_y.iloc[count, c]:
-
                         y[row] = 0
 
                 if y[row] == 1:
-
-                    count = count + 1
+                    count += 1
 
             else:
-
-                print('else')
                 for r in range(row, dataframe_x.shape[0]):
-
                     y[r] = 0
 
-        print(y)
         return y
 
