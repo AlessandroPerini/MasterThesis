@@ -1,8 +1,6 @@
 from pydotplus import pydotplus
-from sklearn import tree
 import collections
 from sklearn import tree
-import numpy as np
 import pandas as pd
 
 
@@ -10,7 +8,12 @@ class Utility:
 
     @staticmethod
     def tree_printer(classifier, features):
+        """
 
+        :param classifier:
+        :param features:
+        :return:
+        """
         try:
             dot_data = tree.export_graphviz(classifier,
                                             feature_names=features,
@@ -32,7 +35,7 @@ class Utility:
                     dest.set_fillcolor(colors[i])
 
             graph.write_png('tree.png')
-            print("Printed!")
+            print("Tree printed!")
 
         except ValueError as ve:
             print("Tree not printed!" + ve)
@@ -47,6 +50,10 @@ class Utility:
         Note: dataframe_x and dataframe_y must have the same number of parameters (column)
         and their tuples must be ordered in the same way.
         """
+
+        dataframe_x = dataframe_x.sort_values(by=dataframe_x.columns.tolist())
+        dataframe_y = dataframe_y.sort_values(by=dataframe_x.columns.tolist())
+
         col = len(dataframe_x.columns)
         y = [1] * dataframe_x.shape[0]
         count = 0
@@ -80,11 +87,10 @@ class Utility:
             new_rows['tupleset'] = [row] * new_rows.shape[0]
 
             if new_rows.shape[0] == 1:
-                new_rows['isfree?'] = [0] * new_rows.shape[0]
+                new_rows['isfree'] = [0] * new_rows.shape[0]
             else:
-                new_rows['isfree?'] = [1] * new_rows.shape[0]
+                new_rows['isfree'] = [1] * new_rows.shape[0]
 
             result = pd.concat([result, new_rows], axis=0)
 
         return result
-
