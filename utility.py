@@ -2,6 +2,7 @@ from pydotplus import pydotplus
 from sklearn import tree
 import collections
 from sklearn import tree
+import numpy as np
 
 
 class Utility:
@@ -38,12 +39,32 @@ class Utility:
     @staticmethod
     def y_creator(dataframe_x, dataframe_y):
 
-        y = [0] * dataframe_x.shape[0]
+        col = len(dataframe_x.columns)
+        y = [1] * dataframe_x.shape[0]
         count = 0
 
         for row in range(dataframe_x.shape[0]):
-            if dataframe_x.iloc[row] == dataframe_y.iloc[count]:
-                y[row] = 1
-                count = count + 1
+            print('row:')
+            print(row)
+            if count < dataframe_y.shape[0]:
 
+                for c in range(col):
+
+                    if dataframe_x.iloc[row, c] != dataframe_y.iloc[count, c]:
+
+                        y[row] = 0
+
+                if y[row] == 1:
+
+                    count = count + 1
+
+            else:
+
+                print('else')
+                for r in range(row, dataframe_x.shape[0]):
+
+                    y[r] = 0
+
+        print(y)
         return y
+
