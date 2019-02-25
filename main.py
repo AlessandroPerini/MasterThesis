@@ -4,6 +4,7 @@ import pandas as pd
 from oneHotEncoding import OneHotEncoding
 from sklearn import tree
 from utility import Utility
+import sklearn
 
 connection = DBConnection()
 connection.database_connection()
@@ -17,8 +18,8 @@ column_id = [item['id'] for item in result]
 column_Age = [item['Age'] for item in result
 """
 
-df_x = pd.DataFrame(connection.query("select age, sex from censusdata where id < 100"))
-df_y = pd.DataFrame(connection.query("select age, sex from censusdata where id = 3 or  id = 4"))
+df_x = pd.DataFrame(connection.query("select age, capitalgain, capitalloss, hoursperweek from censusdata where id < 100"))
+df_y = pd.DataFrame(connection.query("select age, hoursperweek from censusdata where id = 3 or  id = 4 or  id = 7  or  id = 22  or  id = 55"))
 y = Utility().transform_y_to_all_results(df_x, df_y)
 print(y)
 
