@@ -10,9 +10,9 @@ class Utility:
     def tree_printer(classifier, features):
         """
 
-        :param classifier:
-        :param features:
-        :return:
+        :param classifier: variable in witch is built the decision tree
+        :param features: headers of columns of dataframe x
+        :return: nothing, it prints the png image with the tree
         """
         try:
             dot_data = tree.export_graphviz(classifier,
@@ -48,7 +48,6 @@ class Utility:
         :return: y vector
 
         Note: dataframe_x and dataframe_y must have the same number of parameters (column)
-        and their tuples must be ordered in the same way.
         """
 
         dataframe_x = dataframe_x.sort_values(by=dataframe_x.columns.tolist())
@@ -75,6 +74,11 @@ class Utility:
 
     @staticmethod
     def transform_y_to_all_results(dataframe_x, dataframe_results):
+        """
+        :param dataframe_x: main data frame
+        :param dataframe_results: data frame of results that are visible to the user
+        :return: y with all the tuples that have the attributes of dataframe_result also with columns 'isfree' and 'tupleset'
+        """
         result = pd.DataFrame()
         for row in range(dataframe_results.shape[0]):
 

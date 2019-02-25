@@ -12,7 +12,12 @@ from utility import Utility
 class OneHotEncoding:
 
     def encoder(self, data_frame):
+        """
 
+        :param data_frame: dataframe x on witch will be done the one-hot-encoding
+        :return: dataframe encoded: it deletes columns with less than 5 distinct values and adds a number of columns
+        equal to the distinct values deleted. in each column values will be 0 or 1.
+        """
         try:
             result = pd.DataFrame()
 
@@ -34,6 +39,11 @@ class OneHotEncoding:
 
     @staticmethod
     def one_hot_encoding(column):
+        """
+
+        :param column: column on witch will be done the encoding
+        :return: the dataframe with the columns changed that have to be added to the initial database
+        """
 
         try:
             column_names = column.unique()
