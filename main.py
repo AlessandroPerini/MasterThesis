@@ -8,8 +8,8 @@ import sklearn
 
 connection = DBConnection()
 connection.database_connection()
-df_x = pd.DataFrame(connection.query("select age, capitalgain, capitalloss, hoursperweek from censusdata where id < 1000"))
-df_y = pd.DataFrame(connection.query("select age, hoursperweek from censusdata where id>20 and id<35"))
+df_x = pd.DataFrame(connection.query("select age, capitalgain, capitalloss, hoursperweek from censusdata where id < 20"))
+df_y = pd.DataFrame(connection.query("select age, hoursperweek from censusdata where id=3 or id=5 or id=7"))
 print('this is yor result table:')
 print(df_y)
 utility = Utility()
@@ -21,11 +21,16 @@ if random_cluster == 'r':
     y = utility.free_tuple_selection_random(y)
 else:
     y = utility.free_tuple_selection_cluster(y)
-vect_y = utility.y_creator(df_x, y)
+list_y = utility.y_creator(df_x, y)
+print('questa è la lista di y:')
+print(list_y)
 encoded = OneHotEncoding().encoder(df_x)
 classifier = tree.DecisionTreeClassifier()
-classifier.fit(encoded, vect_y)
+classifier.fit(encoded, list_y)
 headers = list(encoded.columns.values)
 utility.tree_printer(classifier, headers)
 print(classifier.tree_.max_depth)
+
+utility.path_finder(classifier, df_x, list_y,headers)
+
 connection.close_connection()

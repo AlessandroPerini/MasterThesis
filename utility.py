@@ -4,6 +4,7 @@ from sklearn import tree
 import pandas as pd
 from random import randint
 from sklearn.cluster import KMeans
+import numpy as np
 
 
 class Utility:
@@ -21,7 +22,8 @@ class Utility:
                                             feature_names=features,
                                             out_file=None,
                                             filled=True,
-                                            rounded=True)
+                                            rounded=True,
+                                            node_ids=True)
             graph = pydotplus.graph_from_dot_data(dot_data)
 
             colors = ('turquoise', 'orange')
@@ -47,7 +49,7 @@ class Utility:
         """
         :param dataframe_x: main dataframe
         :param dataframe_y: dataframe with tuples that are congruent with the result
-        :return: y vector
+        :return: y list
 
         Note: dataframe_x must have less column than dataframe_y
         """
@@ -147,3 +149,59 @@ class Utility:
         print('this is y after the cluster selection of the free tuples')
         print(result)
         return result
+
+    @staticmethod
+    def path_finder(classifier, dataframe_x, list_y, headers):
+        children_left = classifier.tree_.children_left
+        children_right = classifier.tree_.children_right
+        applied = classifier.apply(dataframe_x)
+        matrix = classifier.decision_path(dataframe_x)
+        value = classifier.tree_.value
+        features = classifier.tree_.feature
+        thresholds = classifier.tree_.threshold
+        important_nodes = list()
+        for elem in range(len(list_y)):
+            if list_y[elem] != 0:
+                important_nodes.append(applied[elem])
+        print('important nodes:')
+        print(important_nodes)
+        explanations = list()
+        for elem in range(len(list_y)):
+            if list_y[elem] != 0:
+                tmp_matrix = matrix[elem, :]
+                print('questo è elem che consideriamo:')
+                print(elem)
+                print('la sua  matrice è:')
+                print(tmp_matrix)
+                tmp_matrix = tmp_matrix.todense()
+                print(tmp_matrix)
+                tmp_matrix = np.squeeze(np.asarray(tmp_matrix))
+                node_path = list()
+                attribute_path = list()
+                threshold_path = list()
+                for index in range(len(tmp_matrix)):
+                    if tmp_matrix[index] != 0:
+                        node_path.append(index)
+                        if features[index] != -2:
+                            attribute_path.append(headers[features[index]])
+                            threshold_path.append(thresholds[index])
+                print('e questo è il suo node path:')
+                print(node_path)
+                print('e questo è il suo attribute path:')
+                print(attribute_path)
+                print(threshold_path)
+                explanation = list()
+                for index in range(len(node_path)-1):
+                    if children_left[node_path[index]] == node_path[index+1]:
+                        explanation.append(attribute_path[index] + ' <= ' + str(threshold_path[index]))
+                    else:
+                        explanation.append(attribute_path[index] + ' > ' + str(threshold_path[index]))
+                print(explanation)
+
+                explanation_string = ''
+                for index in range(len(explanation)):
+                    if index != 0 and index<len(explanation):
+                        explanation_string = explanation_string + ' and '
+                    explanation_string = explanation_string + explanation[index]
+                explanations.append(explanation_string)
+        print(explanations)
