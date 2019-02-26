@@ -8,22 +8,24 @@ import sklearn
 
 connection = DBConnection()
 connection.database_connection()
-df_x = pd.DataFrame(connection.query("select age, capitalgain, capitalloss, hoursperweek from censusdata where id < 100"))
-df_y = pd.DataFrame(connection.query("select age, hoursperweek from censusdata where id = 3 or  id = 4 or  id = 7  or  id = 22  or  id = 55"))
+df_x = pd.DataFrame(connection.query("select age, capitalgain, capitalloss, hoursperweek from censusdata where id < 1000"))
+df_y = pd.DataFrame(connection.query("select age, hoursperweek from censusdata where id>20 and id<35"))
 print('this is yor result table:')
 print(df_y)
-y = Utility().transform_y_to_all_results(df_x, df_y)    #transforms y so that it will have all the attributes as X
+utility = Utility()
+y = utility.transform_y_to_all_results(df_x, df_y)    #transforms y so that it will have all the attributes as X
+
 print('do you prefer a random or a cluster choice of the free tuples? (r / c)')
 random_cluster = input()
 if random_cluster == 'r':
-    y = Utility().free_tuple_selection_random(y)
+    y = utility.free_tuple_selection_random(y)
 else:
-    y = Utility().free_tuple_selection_cluster(y)
-vect_y = Utility().y_creator(df_x, y)
+    y = utility.free_tuple_selection_cluster(y)
+vect_y = utility.y_creator(df_x, y)
 encoded = OneHotEncoding().encoder(df_x)
 classifier = tree.DecisionTreeClassifier()
 classifier.fit(encoded, vect_y)
 headers = list(encoded.columns.values)
-Utility().tree_printer(classifier, headers)
-print('tree printed in png')
+utility.tree_printer(classifier, headers)
+print(classifier.tree_.max_depth)
 connection.close_connection()

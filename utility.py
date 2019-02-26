@@ -8,8 +8,9 @@ from sklearn.cluster import KMeans
 
 class Utility:
 
-    @staticmethod
-    def tree_printer(classifier, features):
+    free_tuple_selection_type = ''
+
+    def tree_printer(self, classifier, features):
         """
         :param classifier: variable in witch is built the decision tree
         :param features: headers of columns of dataframe x
@@ -35,7 +36,7 @@ class Utility:
                     dest = graph.get_node(str(edges[edge][i]))[0]
                     dest.set_fillcolor(colors[i])
 
-            graph.write_png('treeRandom.png')
+            graph.write_png(self.free_tuple_selection_type)
             print("Tree printed!")
 
         except ValueError as ve:
@@ -53,9 +54,6 @@ class Utility:
 
         dataframe_x = dataframe_x.sort_values(by=dataframe_x.columns.tolist())
         dataframe_y = dataframe_y.sort_values(by=dataframe_x.columns.tolist())
-        print('inizio y creator')
-        print(dataframe_y)
-        print(dataframe_x)
         col = len(dataframe_x.columns)
         y = [1] * dataframe_x.shape[0]
         count = 0
@@ -99,14 +97,16 @@ class Utility:
 
             result = pd.concat([result, new_rows], axis=0)
 
+        print('this is the table with the new columns:')
+        print(result)
         return result
 
-    @staticmethod
-    def free_tuple_selection_random(dataframe_y):
+    def free_tuple_selection_random(self, dataframe_y):
         """
         :param dataframe_y: dataframe from which we want to select randomly the tuple of every set of free tuples
         :return: dataframe y only with positive tuples
         """
+        self.free_tuple_selection_type = 'treeRandom.png'
         result = pd.DataFrame()
         for set_index in range(len(dataframe_y.tupleset.unique())):
             tmp = dataframe_y[(dataframe_y.tupleset == set_index)]
@@ -118,14 +118,16 @@ class Utility:
 
         # result = result.drop(axis=1, columns=["tupleset", "isfree"])
         # Per ora non serve...
+        print('this is y after the random selection of the free tuples')
+        print(result)
         return result
 
-    @staticmethod
-    def free_tuple_selection_cluster(dataframe_y):
+    def free_tuple_selection_cluster(self, dataframe_y):
         """
         :param dataframe_y: dataframe from which we want to select the tuple of every set of free tuples using KMeans clusters
         :return: dataframe y only with positive tuples
         """
+        self.free_tuple_selection_type = 'treeCluster.png'
         n_clusters = 3
         kmeans = KMeans(n_clusters=n_clusters).fit(dataframe_y)
         print(kmeans.labels_)
@@ -142,4 +144,6 @@ class Utility:
                 result = pd.concat([result, rows.iloc[[0]]], axis=0)
                 dataframe_y = dataframe_y[dataframe_y.tupleset != set]
 
+        print('this is y after the cluster selection of the free tuples')
+        print(result)
         return result
