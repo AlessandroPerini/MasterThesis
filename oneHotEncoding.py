@@ -5,8 +5,6 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 from sklearn import preprocessing
 import pandas as pd
-from sklearn import tree
-from utility import Utility
 
 
 class OneHotEncoding:

@@ -5,19 +5,20 @@ import pandas as pd
 from random import randint
 from sklearn.cluster import KMeans
 import numpy as np
-
+from oneHotEncoding import OneHotEncoding
 
 class Utility:
 
     free_tuple_selection_type = ''
 
-    def tree_printer(self, classifier, features):
+    def tree_printer(self, classifier, dataframe_x):
         """
         :param classifier: variable in witch is built the decision tree
         :param features: headers of columns of dataframe x
         :return: nothing, it prints the png image with the tree
         """
         try:
+            features = list(dataframe_x.columns.values)
             dot_data = tree.export_graphviz(classifier,
                                             feature_names=features,
                                             out_file=None,
@@ -152,57 +153,74 @@ class Utility:
         return result
 
     @staticmethod
-    def path_finder(classifier, dataframe_x, list_y, headers):
-        children_left = classifier.tree_.children_left
-        children_right = classifier.tree_.children_right
-        applied = classifier.apply(dataframe_x)
+    def path_finder(classifier, dataframe_x, list_y):
+        """
+        :param classifier: classifier
+        :param dataframe_x: dataframe x
+        :param list_y: y list
+        :param headers: names of the features
+        :return: string with explanations
+        """
+        headers = list(dataframe_x.columns.values)
         matrix = classifier.decision_path(dataframe_x)
-        value = classifier.tree_.value
+        children_left = classifier.tree_.children_left
         features = classifier.tree_.feature
         thresholds = classifier.tree_.threshold
+
+        """
+        applied = classifier.apply(dataframe_x)
         important_nodes = list()
         for elem in range(len(list_y)):
             if list_y[elem] != 0:
                 important_nodes.append(applied[elem])
         print('important nodes:')
         print(important_nodes)
+        """
+
         explanations = list()
         for elem in range(len(list_y)):
             if list_y[elem] != 0:
                 tmp_matrix = matrix[elem, :]
-                print('questo è elem che consideriamo:')
-                print(elem)
-                print('la sua  matrice è:')
-                print(tmp_matrix)
                 tmp_matrix = tmp_matrix.todense()
-                print(tmp_matrix)
                 tmp_matrix = np.squeeze(np.asarray(tmp_matrix))
                 node_path = list()
                 attribute_path = list()
                 threshold_path = list()
+
                 for index in range(len(tmp_matrix)):
                     if tmp_matrix[index] != 0:
                         node_path.append(index)
+
                         if features[index] != -2:
                             attribute_path.append(headers[features[index]])
                             threshold_path.append(thresholds[index])
-                print('e questo è il suo node path:')
-                print(node_path)
-                print('e questo è il suo attribute path:')
-                print(attribute_path)
-                print(threshold_path)
+
                 explanation = list()
-                for index in range(len(node_path)-1):
-                    if children_left[node_path[index]] == node_path[index+1]:
+                for index in range(len(node_path) - 1):
+                    if children_left[node_path[index]] == node_path[index + 1]:
                         explanation.append(attribute_path[index] + ' <= ' + str(threshold_path[index]))
                     else:
                         explanation.append(attribute_path[index] + ' > ' + str(threshold_path[index]))
-                print(explanation)
 
                 explanation_string = ''
                 for index in range(len(explanation)):
-                    if index != 0 and index<len(explanation):
-                        explanation_string = explanation_string + ' and '
-                    explanation_string = explanation_string + explanation[index]
+                    if index != 0 and index < len(explanation):
+                        explanation_string += ' and '
+                    explanation_string += explanation[index]
+
                 explanations.append(explanation_string)
-        print(explanations)
+
+        return explanations
+
+    def preprocessing(self, x, y):
+        y = self.transform_y_to_all_results(x, y)  # transforms y so that it will have all the attributes as X
+        y = OneHotEncoding().encoder(y, x)
+        print('do you prefer a random or a cluster choice of the free tuples? (r / c)')
+        random_cluster = input()
+        if random_cluster == 'r':
+            y = self.free_tuple_selection_random(y)
+        else:
+            y = self.free_tuple_selection_cluster(y)
+        x = OneHotEncoding().encoder(x, x)
+        list_y = self.y_creator(x, y)
+        return x, list_y
