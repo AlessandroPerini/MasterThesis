@@ -9,7 +9,7 @@ from oneHotEncoding import OneHotEncoding
 
 class Utility:
 
-    free_tuple_selection_type = ''
+    free_tuple_selection_type = 'default.png'
 
     def tree_printer(self, classifier, dataframe_x):
         """
@@ -224,3 +224,7 @@ class Utility:
         x = OneHotEncoding().encoder(x, x)
         list_y = self.y_creator(x, y)
         return x, list_y
+
+    #def max_number_first(self):
+
+    #def min_altitude_fist(self):
