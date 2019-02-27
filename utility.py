@@ -129,6 +129,7 @@ class Utility:
         :param dataframe_y: dataframe from which we want to select the tuple of every set of free tuples using KMeans clusters
         :return: dataframe y only with positive tuples
         """
+
         self.free_tuple_selection_type = 'treeCluster.png'
         n_clusters = 3
         kmeans = KMeans(n_clusters=n_clusters).fit(dataframe_y)
