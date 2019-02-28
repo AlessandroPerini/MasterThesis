@@ -104,7 +104,7 @@ class Utility:
 
             result = pd.concat([result, new_rows], axis=0)
 
-        print('this is the table with the new columns:')
+        print('this is the table with the new columns (y):')
         print(result)
         return result
 
@@ -152,7 +152,7 @@ class Utility:
                 result = pd.concat([result, rows.iloc[[0]]], axis=0)
                 dataframe_y = dataframe_y[dataframe_y.tupleset != set]
 
-        print('this is y after the cluster selection of the free tuples')
+        print('This is y after the cluster selection of the free tuples')
         print(result)
         return result
 
@@ -237,7 +237,6 @@ class Utility:
                 important_nodes.append(applied[elem])
 
         imp_index = 1
-        print(y.isfree.tolist())
         result = pd.DataFrame()
         new_list_y = [0] * len(list_y)
         while 1 in y.isfree.tolist() or 0 in y.isfree.tolist():

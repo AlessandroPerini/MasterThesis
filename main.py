@@ -12,20 +12,9 @@ connection.database_connection()
 x = pd.DataFrame(connection.query("select age, sex , workclass from censusdata where id < 100"))
 y = pd.DataFrame(connection.query("select age, sex from censusdata where id = 3 or id = 5 or (id > 20 and id < 30)"))
 
-print('this is yor result table:')
-print(y)
 #Tests().test_a_priori_free_tuple_selection(x, y)
 
-utility = Utility()
-y = utility.transform_y_to_all_results(x, y)
-y = OneHotEncoding().encoder(y, x)
-x = OneHotEncoding().encoder(x, x)
-x, y, list_y = utility.y_creator(x,y)
-print(list_y)
-classifier = tree.DecisionTreeClassifier()
-classifier.fit(x, list_y)
-utility.tree_printer(classifier, x)
-
+classifier, x, y, list_y = Tests().test_all_free_tuples_selection(x,y)
 applied = classifier.apply(x)
 important_nodes = list()
 for elem in range(len(list_y)):
@@ -53,7 +42,7 @@ print("value:")
 print(value)
 """
 
-
+utility = Utility()
 classifier2, y, list_y = utility.most_important_node_first(classifier, x, y, list_y)
 applied = classifier2.apply(x)
 print(y)
