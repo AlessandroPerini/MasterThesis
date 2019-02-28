@@ -11,7 +11,7 @@ class Tests:
         classifier = tree.DecisionTreeClassifier()
         x, y, list_y = utility.preprocessing(x, y)
         classifier.fit(x, list_y)
-        utility.tree_printer(classifier, x)
+        utility.tree_printer(classifier, x, list_y)
         utility.path_finder(classifier, x, list_y)
 
     @staticmethod
@@ -28,7 +28,7 @@ class Tests:
         x = OneHotEncoding().encoder(x, x)
         x, y, list_y = utility.y_creator(x, y)
         classifier.fit(x, list_y)
-        utility.tree_printer(classifier, x)
+        utility.tree_printer(classifier, x, list_y)
         return classifier, x, y, list_y
 
     @staticmethod
@@ -43,7 +43,14 @@ class Tests:
         print('Important nodes BEFORE:')
         print(important_nodes)
         utility = Utility()
-        classifier2, y, list_y = utility.most_important_node_first(classifier, x, y, list_y)
+
+        print('do you prefer an approach min altitude first(min) or most important node firts(most)?')
+        selection = input()
+        if selection=='min':
+            classifier2, y, list_y = utility.min_altitude_first(x, y, list_y, classifier)
+        else:
+            classifier2, y, list_y = utility.most_important_node_first(classifier, x, y, list_y)
+
         applied = classifier2.apply(x)
         print(y)
         print(list_y)
