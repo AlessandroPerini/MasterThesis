@@ -6,17 +6,20 @@ from random import randint
 from sklearn.cluster import KMeans
 import numpy as np
 from oneHotEncoding import OneHotEncoding
+from collections import Counter
+
 
 class Utility:
 
-    free_tuple_selection_type = ''
+    tree_path = 'default.png'
 
-    def tree_printer(self, classifier, dataframe_x):
+    def tree_printer(self, classifier, dataframe_x, tree_path='default.png'):
         """
         :param classifier: variable in witch is built the decision tree
         :param features: headers of columns of dataframe x
         :return: nothing, it prints the png image with the tree
         """
+        self.tree_path = tree_path
         try:
             features = list(dataframe_x.columns.values)
             dot_data = tree.export_graphviz(classifier,
@@ -39,7 +42,7 @@ class Utility:
                     dest = graph.get_node(str(edges[edge][i]))[0]
                     dest.set_fillcolor(colors[i])
 
-            graph.write_png(self.free_tuple_selection_type)
+            graph.write_png(self.tree_path)
             print("Tree printed!")
 
         except ValueError as ve:
@@ -50,13 +53,14 @@ class Utility:
         """
         :param dataframe_x: main dataframe
         :param dataframe_y: dataframe with tuples that are congruent with the result
-        :return: y list
+        :return: y list, reordered dataframe_x
 
         Note: dataframe_x must have less column than dataframe_y
         """
 
         dataframe_x = dataframe_x.sort_values(by=dataframe_x.columns.tolist())
         dataframe_y = dataframe_y.sort_values(by=dataframe_x.columns.tolist())
+
         col = len(dataframe_x.columns)
         y = [1] * dataframe_x.shape[0]
         count = 0
@@ -74,7 +78,7 @@ class Utility:
                 for r in range(row, dataframe_x.shape[0]):
                     y[r] = 0
 
-        return y
+        return dataframe_x, dataframe_y, y
 
     @staticmethod
     def transform_y_to_all_results(dataframe_x, dataframe_results):
@@ -109,7 +113,7 @@ class Utility:
         :param dataframe_y: dataframe from which we want to select randomly the tuple of every set of free tuples
         :return: dataframe y only with positive tuples
         """
-        self.free_tuple_selection_type = 'treeRandom.png'
+        self.tree_path = 'treeRandom.png'
         result = pd.DataFrame()
         for set_index in range(len(dataframe_y.tupleset.unique())):
             tmp = dataframe_y[(dataframe_y.tupleset == set_index)]
@@ -131,7 +135,7 @@ class Utility:
         :return: dataframe y only with positive tuples
         """
 
-        self.free_tuple_selection_type = 'treeCluster.png'
+        self.tree_path = 'treeCluster.png'
         n_clusters = 3
         kmeans = KMeans(n_clusters=n_clusters).fit(dataframe_y)
         print(kmeans.labels_)
@@ -222,5 +226,50 @@ class Utility:
         else:
             y = self.free_tuple_selection_cluster(y)
         x = OneHotEncoding().encoder(x, x)
-        list_y = self.y_creator(x, y)
+        x, y, list_y = self.y_creator(x, y)
         return x, list_y
+
+    def most_important_node_first(self, classifier, x, y, list_y):
+        applied = classifier.apply(x)
+        important_nodes = list()
+        for elem in range(len(list_y)):
+            if list_y[elem] != 0:
+                important_nodes.append(applied[elem])
+
+        imp_index = 1
+        print(y.isfree.tolist())
+        result = pd.DataFrame()
+        new_list_y = [0] * len(list_y)
+        while 1 in y.isfree.tolist() or 0 in y.isfree.tolist():
+            most_important = collections.Counter(important_nodes).most_common(imp_index)[imp_index - 1][0]
+            imp_index += 1
+            # Search for all the elements that are in the node 'c'
+            for elem in range(y.shape[0]):
+                list_y_index = 0
+                y_ref = 0
+                if important_nodes[elem] == most_important:
+                    if y.isfree.iloc[elem] == 1:
+                        while y_ref != elem + 1:
+                            if list_y[list_y_index] == 1:
+                                y_ref += 1
+                            list_y_index += 1
+                        new_list_y[list_y_index] = 1
+                        result = pd.concat([result, y.iloc[[elem]]], axis=0)
+                        # for loop on the elements of the set to set the isfree column = -1
+                        for row in range(y.shape[0]):
+                            if y.tupleset.iloc[row] == y.tupleset.iloc[elem]:
+                                y.isfree.iloc[row] = -1
+
+                    elif y.isfree.iloc[elem] == 0:
+                        while y_ref != elem + 1:
+                            if list_y[list_y_index] == 1:
+                                y_ref += 1
+                            list_y_index += 1
+
+                        new_list_y[list_y_index] = 1
+                        result = pd.concat([result, y.iloc[[elem]]], axis=0)
+
+                    y.isfree.iloc[elem] = -1
+
+        result = result.drop(axis=1, columns=["isfree"])
+        return classifier, result, new_list_y
