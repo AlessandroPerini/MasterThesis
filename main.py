@@ -9,20 +9,16 @@ from collections import Counter
 
 connection = DBConnection()
 connection.database_connection()
-x = pd.DataFrame(connection.query("select age, sex , workclass from censusdata where id < 100"))
+x = pd.DataFrame(connection.query("select age, sex , workclass, race, hoursperweek from censusdata where id < 100"))
 y = pd.DataFrame(connection.query("select age, sex from censusdata where id = 3 or id = 5 or (id > 20 and id < 30)"))
 
-#Tests().test_a_priori_free_tuple_selection(x, y)
+print('do you prefer a-priori (pr) or a-posteriory (po) free tuples selectio?')
+select = input()
+if select == 'pr':
+    Tests().test_a_priori_free_tuples_selection(x, y)
+else:
+    Tests().test_a_posteriori_free_tuples_selection(x,y)
 
-classifier, x, y, list_y = Tests().test_all_free_tuples_selection(x,y)
-applied = classifier.apply(x)
-important_nodes = list()
-for elem in range(len(list_y)):
-    if list_y[elem] != 0:
-        important_nodes.append(applied[elem])
-
-print('important nodes PRIMA:')
-print(important_nodes)
 
 """
 children_left = classifier.tree_.children_left
@@ -40,23 +36,7 @@ print(thresholds)
 value = classifier.tree_.value
 print("value:")
 print(value)
+
 """
-
-utility = Utility()
-classifier2, y, list_y = utility.most_important_node_first(classifier, x, y, list_y)
-applied = classifier2.apply(x)
-print(y)
-print(list_y)
-
-important_nodes = list()
-for elem in range(len(list_y)):
-    if list_y[elem] != 0:
-        important_nodes.append(applied[elem])
-
-print('important nodes DOPO:')
-print(important_nodes)
-
-path = utility.path_finder(classifier2, x, list_y)
-print(path)
 
 connection.close_connection()

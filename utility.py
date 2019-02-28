@@ -6,7 +6,6 @@ from random import randint
 from sklearn.cluster import KMeans
 import numpy as np
 from oneHotEncoding import OneHotEncoding
-from collections import Counter
 
 
 class Utility:
@@ -19,7 +18,8 @@ class Utility:
         :param features: headers of columns of dataframe x
         :return: nothing, it prints the png image with the tree
         """
-        self.tree_path = tree_path
+        if tree_path != 'default.png':
+            self.tree_path = tree_path
         try:
             features = list(dataframe_x.columns.values)
             dot_data = tree.export_graphviz(classifier,
@@ -43,7 +43,7 @@ class Utility:
                     dest.set_fillcolor(colors[i])
 
             graph.write_png(self.tree_path)
-            print("Tree printed!")
+            print("Tree " + self.tree_path + " printed!")
 
         except ValueError as ve:
             print("Tree not printed!" + ve)
@@ -143,7 +143,7 @@ class Utility:
         result = pd.DataFrame()
 
         while dataframe_y.shape[0]:
-            tmp_cluster = dataframe_y.cluster.mode().values[0]  # takes the biggest cluster
+            tmp_cluster = dataframe_y.cluster.mode().values[0]  # Takes the biggest cluster
             tmp = dataframe_y[(dataframe_y.cluster == tmp_cluster)]
             dataframe_y = dataframe_y[dataframe_y.cluster != tmp_cluster]
 
@@ -170,16 +170,6 @@ class Utility:
         children_left = classifier.tree_.children_left
         features = classifier.tree_.feature
         thresholds = classifier.tree_.threshold
-
-        """
-        applied = classifier.apply(dataframe_x)
-        important_nodes = list()
-        for elem in range(len(list_y)):
-            if list_y[elem] != 0:
-                important_nodes.append(applied[elem])
-        print('important nodes:')
-        print(important_nodes)
-        """
 
         explanations = list()
         for elem in range(len(list_y)):
@@ -227,7 +217,7 @@ class Utility:
             y = self.free_tuple_selection_cluster(y)
         x = OneHotEncoding().encoder(x, x)
         x, y, list_y = self.y_creator(x, y)
-        return x, list_y
+        return x, y, list_y
 
     def most_important_node_first(self, classifier, x, y, list_y):
         applied = classifier.apply(x)
