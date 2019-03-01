@@ -375,6 +375,7 @@ class Utility:
             print('most important node')
             print(most_important)
             altitude_of_important_nodes[min_altitude_index] = 100
+            print(altitude_of_important_nodes)
             # Search for all the elements that are in the node 'c'
             for elem in range(y.shape[0]):
                 list_y_index = 0
