@@ -46,7 +46,7 @@ class Tests:
 
         print('do you prefer an approach min altitude first(min) or most important node firts(most)?')
         selection = input()
-        if selection=='min':
+        if selection == 'min':
             classifier2, y, list_y = utility.min_altitude_first(x, y, list_y, classifier)
         else:
             classifier2, y, list_y = utility.most_important_node_first(classifier, x, y, list_y)

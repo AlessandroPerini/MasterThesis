@@ -87,10 +87,15 @@ class Utility:
         dataframe_x = dataframe_x.sort_values(by=dataframe_x.columns.tolist())
         dataframe_y = dataframe_y.sort_values(by=dataframe_x.columns.tolist())
 
+        print('check questi due:')
+        print(dataframe_x)
+        print(dataframe_y)
+
         col = len(dataframe_x.columns)
         y = [1] * dataframe_x.shape[0]
         count = 0
-
+        print("shape di y=")
+        print(dataframe_y.shape[0])
         for row in range(dataframe_x.shape[0]):
             if count < dataframe_y.shape[0]:
                 for c in range(col):
@@ -99,11 +104,14 @@ class Utility:
 
                 if y[row] == 1:
                     count += 1
-
             else:
                 for r in range(row, dataframe_x.shape[0]):
                     y[r] = 0
-
+            print(count)
+            print(row)
+        print('risultati dell y creator')
+        print(y)
+        print(dataframe_y)
         return dataframe_x, dataframe_y, y
 
     @staticmethod
@@ -113,10 +121,10 @@ class Utility:
         :param dataframe_results: data frame of results that are visible to the user
         :return: y with all the tuples that have the attributes of dataframe_result also with columns 'isfree' and 'tupleset'
         """
+        dataframe_results = dataframe_results.drop_duplicates()
         result = pd.DataFrame()
         for row in range(dataframe_results.shape[0]):
             new_rows = dataframe_x
-
             for column in range(len(dataframe_results.columns)):
                 new_rows = new_rows[
                     (new_rows[dataframe_results.columns.values[column]] == dataframe_results.iloc[row, column])]
@@ -255,11 +263,17 @@ class Utility:
         imp_index = 1
         result = pd.DataFrame()
         new_list_y = [0] * len(list_y)
+        print('list_y:')
+        print(list_y)
         while 1 in y.isfree.tolist() or 0 in y.isfree.tolist():
             most_important = collections.Counter(important_nodes).most_common(imp_index)[imp_index - 1][0]
+            print('most important:')
+            print(most_important)
             imp_index += 1
             # Search for all the elements that are in the node 'c'
             for elem in range(y.shape[0]):
+                print('elem:')
+                print(elem)
                 list_y_index = 0
                 y_ref = 0
                 if important_nodes[elem] == most_important:
@@ -306,6 +320,11 @@ class Utility:
         #   - feature, feature used for splitting the node
         #   - threshold, threshold value at the node
 
+        print('SHAPE[0] DI X:')
+        print(dataframe_x.shape[0])
+        print('len list_y :')
+        print(len(list_y))
+                                                  
         n_nodes = classifier.tree_.node_count
         children_left = classifier.tree_.children_left
         children_right = classifier.tree_.children_right
@@ -360,6 +379,8 @@ class Utility:
         print(min(altitude_of_important_nodes))
         result = pd.DataFrame()
         new_list_y = [0] * len(list_y)
+        print('list y = ')
+        print(list_y)
         while 1 in y.isfree.tolist() or 0 in y.isfree.tolist():
             #most_important = collections.Counter(important_nodes).most_common(imp_index)[imp_index - 1][0]
             min_altitude = min(altitude_of_important_nodes)
@@ -369,13 +390,8 @@ class Utility:
                 if altitude_of_important_nodes[i] == min_altitude:
                     min_altitude_index = i
                 i += 1
-            print("min_altitude_index")
-            print(min_altitude_index)
             most_important = important_nodes[min_altitude_index]
-            print('most important node')
-            print(most_important)
             altitude_of_important_nodes[min_altitude_index] = 100
-            print(altitude_of_important_nodes)
             # Search for all the elements that are in the node 'c'
             for elem in range(y.shape[0]):
                 list_y_index = 0
@@ -385,8 +401,8 @@ class Utility:
                         while y_ref != elem + 1:
                             if list_y[list_y_index] == 1:
                                 y_ref += 1
+                                new_list_y[list_y_index] = 1
                             list_y_index += 1
-                        new_list_y[list_y_index] = 1
                         result = pd.concat([result, y.iloc[[elem]]], axis=0)
                         # for loop on the elements of the set to set the isfree column = -1
                         for row in range(y.shape[0]):
@@ -397,51 +413,11 @@ class Utility:
                         while y_ref != elem + 1:
                             if list_y[list_y_index] == 1:
                                 y_ref += 1
+                                new_list_y[list_y_index] = 1
                             list_y_index += 1
-
-                        new_list_y[list_y_index] = 1
                         result = pd.concat([result, y.iloc[[elem]]], axis=0)
 
                     y.isfree.iloc[elem] = -1
 
         result = result.drop(axis=1, columns=["isfree"])
         return classifier, result, new_list_y
-        """
-        headers = list(dataframe_x.columns.values)
-        matrix = classifier.decision_path(dataframe_x)
-        children_left = classifier.tree_.children_left
-        features = classifier.tree_.feature
-        thresholds = classifier.tree_.threshold
-
-        print('matrix')
-        print(matrix)
-        print('features')
-        print(features)
-
-        applied = classifier.apply(dataframe_x)
-        important_nodes = self.most_important_nodes_generator(list_y, classifier, dataframe_x)
-        altitude_of_important_nodes = [-1] * len(important_nodes)
-        print(important_nodes)
-        print('altitude:')
-        print(altitude_of_important_nodes)
-        print(list_y)
-        print(applied)
-
-        for important_node in important_nodes:
-            jumps_counter = 0
-            tmp_matrix = matrix[important_node, :]
-            tmp_matrix = tmp_matrix.todense()
-            tmp_matrix = np.squeeze(np.asarray(tmp_matrix))
-            print(tmp_matrix)
-            for index in range(len(tmp_matrix)):
-                if tmp_matrix[index] == 1:
-                    jumps_counter += 1
-            print('important node:')
-            print(important_node)
-            print('jumps:')
-            print(jumps_counter)
-            #altitude_of_important_nodes[important_node] = jumps_counter
-
-        print(altitude_of_important_nodes)
-"""
-
