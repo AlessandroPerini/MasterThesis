@@ -11,7 +11,7 @@ class Tests:
         classifier = tree.DecisionTreeClassifier()
         x, y, list_y = utility.preprocessing(x, y)
         classifier.fit(x, list_y)
-        utility.tree_printer(classifier, x)
+        utility.tree_printer(classifier, x, list_y)
         utility.path_finder(classifier, x, list_y)
 
     @staticmethod
@@ -28,7 +28,7 @@ class Tests:
         x = OneHotEncoding().encoder(x, x)
         x, y, list_y = utility.y_creator(x, y)
         classifier.fit(x, list_y)
-        utility.tree_printer(classifier, x)
+        utility.tree_printer(classifier, x, list_y)
         return classifier, x, y, list_y
 
     @staticmethod
