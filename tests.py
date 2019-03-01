@@ -56,5 +56,12 @@ class Tests:
         print('Important nodes AFTER:')
         print(important_nodes)
 
-        path = utility.path_finder(classifier2, x, list_y)
-        print(path)
+        str_expl, dict_expl = utility.path_finder(classifier2, x, list_y)
+
+        print("\n" + "Qui stampo le string explanations:")
+        for str in str_expl:
+            print(str)
+
+        print("\n" + "Qui stampo i dizionari explanations:")
+        for expl in dict_expl:
+            print(expl)
