@@ -43,7 +43,14 @@ class Tests:
         print('Important nodes BEFORE:')
         print(important_nodes)
         utility = Utility()
-        classifier2, y, list_y = utility.most_important_node_first(classifier, x, y, list_y)
+
+        print('do you prefer an approach min altitude first(min) or most important node firts(most)?')
+        selection = input()
+        if selection == 'min':
+            classifier2, y, list_y = utility.min_altitude_first(x, y, list_y, classifier)
+        else:
+            classifier2, y, list_y = utility.most_important_node_first(classifier, x, y, list_y)
+
         applied = classifier2.apply(x)
         print(y)
         print(list_y)
@@ -56,5 +63,12 @@ class Tests:
         print('Important nodes AFTER:')
         print(important_nodes)
 
-        path = utility.path_finder(classifier2, x, list_y)
-        print(path)
+        str_expl, dict_expl = utility.path_finder(classifier2, x, list_y)
+
+        print("\n" + "Qui stampo le string explanations:")
+        for str in str_expl:
+            print(str)
+
+        print("\n" + "Qui stampo i dizionari explanations:")
+        for expl in dict_expl:
+            print(expl)

@@ -17,7 +17,7 @@ select = input()
 if select == 'pr':
     Tests().test_a_priori_free_tuples_selection(x, y)
 else:
-    Tests().test_a_posteriori_free_tuples_selection(x,y)
+    Tests().test_a_posteriori_free_tuples_selection(x, y)
 
 
 """
