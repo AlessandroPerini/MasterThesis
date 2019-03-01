@@ -49,6 +49,15 @@ class Utility:
             print("Tree not printed!" + ve)
 
     @staticmethod
+    def important_nodes_generator(list_y, classifier, dataframe_x):
+        applied = classifier.apply(dataframe_x)
+        important_nodes = list()
+        for elem in range(len(list_y)):
+            if list_y[elem] != 0:
+                important_nodes.append(applied[elem])
+        return important_nodes
+
+    @staticmethod
     def y_creator(dataframe_x, dataframe_y):
         """
         :param dataframe_x: main dataframe
@@ -286,12 +295,7 @@ class Utility:
             return x, y, list_y
 
     def most_important_node_first(self, classifier, x, y, list_y):
-        applied = classifier.apply(x)
-        important_nodes = list()
-        for elem in range(len(list_y)):
-            if list_y[elem] != 0:
-                important_nodes.append(applied[elem])
-
+        important_nodes = self.important_nodes_generator(list_y, classifier, x)
         imp_index = 1
         result = pd.DataFrame()
         new_list_y = [0] * len(list_y)
@@ -349,7 +353,6 @@ class Utility:
         children_right = classifier.tree_.children_right
         feature = classifier.tree_.feature
         threshold = classifier.tree_.threshold
-        applied = classifier.apply(dataframe_x)
 
         # The tree structure can be traversed to compute various properties such
         # as the depth of each node and whether or not it is a leaf.
@@ -384,11 +387,7 @@ class Utility:
                          children_right[i],
                          ))
         print(node_depth)
-        important_nodes = list()
-        for elem in range(len(list_y)):
-            if list_y[elem] != 0:
-                important_nodes.append(applied[elem])
-
+        important_nodes = self.important_nodes_generator(list_y, classifier, dataframe_x)
         altitude_of_important_nodes = [-1] * len(important_nodes)
         print('important nodes:')
         print(important_nodes)
