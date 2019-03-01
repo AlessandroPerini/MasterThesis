@@ -167,28 +167,24 @@ class Utility:
 
     def path_finder(self, classifier, dataframe_x, list_y):
         """
-        :param classifier: classifier
-        :param dataframe_x: dataframe x
-        :param list_y: y list
-        :param headers: names of the features
-        :return: string with explanations
+
+        :param classifier:
+        :param dataframe_x:
+        :param list_y:
+        :return: explanations is a set (list of unique elements) where each element is a dictionary
         """
         headers = list(dataframe_x.columns.values)
         matrix = classifier.decision_path(dataframe_x)
         children_left = classifier.tree_.children_left
         features = classifier.tree_.feature
         thresholds = classifier.tree_.threshold
-
-        dictionaries_explanation = set()
-        explanations = list()
+        explanations = set()
         for elem in range(len(list_y)):
             if list_y[elem] != 0:
                 tmp_matrix = matrix[elem, :]
                 tmp_matrix = tmp_matrix.todense()
                 tmp_matrix = np.squeeze(np.asarray(tmp_matrix))
                 node_path = list()
-                attribute_path = list()
-                threshold_path = list()
                 dictionaries = list()
 
                 for index in range(len(tmp_matrix)):
@@ -196,43 +192,28 @@ class Utility:
                         node_path.append(index)
 
                         if features[index] != -2:
-                            attribute_path.append(headers[features[index]])
-                            threshold_path.append(thresholds[index])
                             dictionary = {'column': headers[features[index]],
                                           'symbol': '',
                                           'value': thresholds[index]}
                             dictionaries.append(dictionary)
 
-                explanation = list()
                 for index in range(len(node_path) - 1):
                     if children_left[node_path[index]] == node_path[index + 1]:
                         dictionaries[index]['symbol'] = '<='
-                        explanation.append(attribute_path[index] + ' <= ' + str(threshold_path[index]))
                     else:
                         dictionaries[index]['symbol'] = '>'
-                        explanation.append(attribute_path[index] + ' > ' + str(threshold_path[index]))
 
-                explanation_string = ''
-                for index in range(len(explanation)):
-                    if index != 0 and index < len(explanation):
-                        explanation_string += ' and '
-                    explanation_string += explanation[index]
-
-                explanations.append(explanation_string)
                 compressed_dictionaries = self.path_compresser(dictionaries)
                 string_compressed_dictionaries = self.from_dictionaries_to_string(compressed_dictionaries)
-                dictionaries_explanation.add(string_compressed_dictionaries)
+                explanations.add(string_compressed_dictionaries)
 
-        return explanations, dictionaries_explanation
+        return explanations
 
     def path_compresser(self, dictionaries):
         compressed_dictionaries = list()
         columns_set = set()
-        print("Dizionari di partenza:")
         for dictionary in dictionaries:
             columns_set.add(dictionary['column'])
-
-            print(dictionary)
 
         for unique_column in columns_set:
             unique_dictionary = list()
@@ -262,11 +243,6 @@ class Utility:
                               'value': less_dict[0]}
                 compressed_dictionaries.append(dictionary)
 
-        print("\n" + 'Dizionari compressi:')
-        for d in compressed_dictionaries:
-            print(d)
-
-        print("\n" + "---------------------------------" + "\n")
         return compressed_dictionaries
 
     @staticmethod
