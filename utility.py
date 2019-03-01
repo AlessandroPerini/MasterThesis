@@ -64,10 +64,9 @@ class Utility:
         col = len(dataframe_x.columns)
         y = [1] * dataframe_x.shape[0]
         count = 0
-        row_index = 0
+
         for row in range(dataframe_x.shape[0]):
             if count < dataframe_y.shape[0]:
-                row_index = row
                 for c in range(col):
                     if dataframe_x.iloc[row, c] != dataframe_y.iloc[count, c]:
                         y[row] = 0
@@ -75,8 +74,9 @@ class Utility:
                 if y[row] == 1:
                     count += 1
 
-        for r in range(row_index+1, dataframe_x.shape[0]):
-            y[r] = 0
+            else:
+                for r in range(row, dataframe_x.shape[0]):
+                    y[r] = 0
 
         return dataframe_x, dataframe_y, y
 
@@ -87,7 +87,6 @@ class Utility:
         :param dataframe_results: data frame of results that are visible to the user
         :return: y with all the tuples that have the attributes of dataframe_result also with columns 'isfree' and 'tupleset'
         """
-        dataframe_results = dataframe_results.drop_duplicates()
         result = pd.DataFrame()
         for row in range(dataframe_results.shape[0]):
             new_rows = dataframe_x
@@ -157,7 +156,8 @@ class Utility:
         print(result)
         return result
 
-    def path_finder(self, classifier, dataframe_x, list_y):
+    @staticmethod
+    def path_finder(classifier, dataframe_x, list_y):
         """
         :param classifier: classifier
         :param dataframe_x: dataframe x
@@ -171,7 +171,6 @@ class Utility:
         features = classifier.tree_.feature
         thresholds = classifier.tree_.threshold
 
-        dictionaries_explanation = set()
         explanations = list()
         for elem in range(len(list_y)):
             if list_y[elem] != 0:
@@ -181,7 +180,6 @@ class Utility:
                 node_path = list()
                 attribute_path = list()
                 threshold_path = list()
-                dictionaries = list()
 
                 for index in range(len(tmp_matrix)):
                     if tmp_matrix[index] != 0:
@@ -190,18 +188,12 @@ class Utility:
                         if features[index] != -2:
                             attribute_path.append(headers[features[index]])
                             threshold_path.append(thresholds[index])
-                            dictionary = {'column': headers[features[index]],
-                                          'symbol': '',
-                                          'value': thresholds[index]}
-                            dictionaries.append(dictionary)
 
                 explanation = list()
                 for index in range(len(node_path) - 1):
                     if children_left[node_path[index]] == node_path[index + 1]:
-                        dictionaries[index]['symbol'] = '<='
                         explanation.append(attribute_path[index] + ' <= ' + str(threshold_path[index]))
                     else:
-                        dictionaries[index]['symbol'] = '>'
                         explanation.append(attribute_path[index] + ' > ' + str(threshold_path[index]))
 
                 explanation_string = ''
@@ -211,66 +203,9 @@ class Utility:
                     explanation_string += explanation[index]
 
                 explanations.append(explanation_string)
-                compressed_dictionaries = self.path_compresser(dictionaries)
-                string_compressed_dictionaries = self.from_dictionaries_to_string(compressed_dictionaries)
-                dictionaries_explanation.add(string_compressed_dictionaries)
 
-        return explanations, dictionaries_explanation
+        return explanations
 
-    def path_compresser(self, dictionaries):
-        compressed_dictionaries = list()
-        columns_set = set()
-        print("Dizionari di partenza:")
-        for dictionary in dictionaries:
-            columns_set.add(dictionary['column'])
-
-            print(dictionary)
-
-        for unique_column in columns_set:
-            unique_dictionary = list()
-            for dictionary in dictionaries:
-                if dictionary['column'] == unique_column:
-                    unique_dictionary.append(dictionary)
-
-            greater_dict = list()
-            less_dict = list()
-            for dictionary in unique_dictionary:
-                if dictionary['symbol'] == '>':
-                    greater_dict.append(dictionary['value'])
-                else:
-                    less_dict.append(dictionary['value'])
-
-            if len(greater_dict) > 0:
-                greater_dict.sort(reverse=True, key=float)
-                dictionary = {'column': unique_column,
-                             'symbol': '>',
-                             'value': greater_dict[0]}
-                compressed_dictionaries.append(dictionary)
-
-            if len(less_dict) > 0:
-                less_dict.sort(key=float)
-                dictionary = {'column': unique_column,
-                             'symbol': '<=',
-                             'value': less_dict[0]}
-                compressed_dictionaries.append(dictionary)
-
-        print("\n" + 'Dizionari compressi:')
-        for d in compressed_dictionaries:
-            print(d)
-
-        print("\n" + "---------------------------------" + "\n")
-        return compressed_dictionaries
-    
-    @staticmethod
-    def from_dictionaries_to_string(dictionaries):
-        result = ''
-        for index in range(len(dictionaries)):
-            if index != 0:
-                result += " and "
-            result += dictionaries[index]['column'] + " " + dictionaries[index]['symbol'] + " " + str(dictionaries[index]['value'])
-        
-        return result
-    
     def preprocessing(self, x, y):
         y = self.transform_y_to_all_results(x, y)  # transforms y so that it will have all the attributes as X
         y = OneHotEncoding().encoder(y, x)
@@ -306,10 +241,8 @@ class Utility:
                         while y_ref != elem + 1:
                             if list_y[list_y_index] == 1:
                                 y_ref += 1
-                                new_list_y[list_y_index] = 1
-
                             list_y_index += 1
-
+                        new_list_y[list_y_index] = 1
                         result = pd.concat([result, y.iloc[[elem]]], axis=0)
                         # for loop on the elements of the set to set the isfree column = -1
                         for row in range(y.shape[0]):
@@ -320,9 +253,9 @@ class Utility:
                         while y_ref != elem + 1:
                             if list_y[list_y_index] == 1:
                                 y_ref += 1
-                                new_list_y[list_y_index] = 1
                             list_y_index += 1
 
+                        new_list_y[list_y_index] = 1
                         result = pd.concat([result, y.iloc[[elem]]], axis=0)
 
                     y.isfree.iloc[elem] = -1
