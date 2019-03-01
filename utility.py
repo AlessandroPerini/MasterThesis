@@ -403,7 +403,6 @@ class Utility:
         result = pd.DataFrame()
         new_list_y = [0] * len(list_y)
         while 1 in y.isfree.tolist() or 0 in y.isfree.tolist():
-            #most_important = collections.Counter(important_nodes).most_common(imp_index)[imp_index - 1][0]
             min_altitude = min(altitude_of_important_nodes)
             min_altitude_index = None
             i = 0
@@ -421,13 +420,17 @@ class Utility:
             for elem in range(y.shape[0]):
                 list_y_index = 0
                 y_ref = 0
+                print('important_nodes[elem] =')
+                print(important_nodes[elem])
                 if important_nodes[elem] == most_important:
+                    print('elem=')
+                    print(elem)
                     if y.isfree.iloc[elem] == 1:
                         while y_ref != elem + 1:
                             if list_y[list_y_index] == 1:
                                 y_ref += 1
+                                new_list_y[list_y_index] = 1
                             list_y_index += 1
-                        new_list_y[list_y_index] = 1
                         result = pd.concat([result, y.iloc[[elem]]], axis=0)
                         # for loop on the elements of the set to set the isfree column = -1
                         for row in range(y.shape[0]):
@@ -438,9 +441,8 @@ class Utility:
                         while y_ref != elem + 1:
                             if list_y[list_y_index] == 1:
                                 y_ref += 1
+                                new_list_y[list_y_index] = 1
                             list_y_index += 1
-
-                        new_list_y[list_y_index] = 1
                         result = pd.concat([result, y.iloc[[elem]]], axis=0)
 
                     y.isfree.iloc[elem] = -1
