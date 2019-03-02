@@ -4,6 +4,7 @@ from sklearn import tree
 import pandas as pd
 from random import randint
 from sklearn.cluster import KMeans
+from sklearn.metrics import pairwise_distances_argmin
 import numpy as np
 from oneHotEncoding import OneHotEncoding
 
@@ -147,18 +148,27 @@ class Utility:
         self.tree_path = 'treeCluster.png'
         n_clusters = 3
         kmeans = KMeans(n_clusters=n_clusters).fit(dataframe_y)
-        print(kmeans.labels_)
+        print('kmeans:')
+        print(kmeans.cluster_centers_)
         dataframe_y['cluster'] = kmeans.labels_
+        print(dataframe_y)
         result = pd.DataFrame()
-
         while dataframe_y.shape[0]:
-            tmp_cluster = dataframe_y.cluster.mode().values[0]  # Takes the biggest cluster
+            tmp_cluster = dataframe_y.cluster.mode().values[0]  # Takes the bigger cluster
+            print('\n' + '------------------------------------------------------------\n' + 'The bigger cluster is: ' + str(tmp_cluster))
             tmp = dataframe_y[(dataframe_y.cluster == tmp_cluster)]
             dataframe_y = dataframe_y[dataframe_y.cluster != tmp_cluster]
-
             for set in tmp.tupleset.unique():
                 rows = tmp[tmp.tupleset == set]
-                result = pd.concat([result, rows.iloc[[0]]], axis=0)
+                temp_rows = rows.drop(axis=1, columns=["cluster"])
+                print('\n' + '----------------------------------' + '\n' + 'rows:')
+                print(temp_rows)
+                closest = pairwise_distances_argmin(kmeans.cluster_centers_, temp_rows)
+                # Returns for each element of x (center) the index of the nearest element of y (row)
+                print('The index of the row that is closer to the centroid of the ' +str(tmp_cluster)+ '° cluster is: ' + str(closest[tmp_cluster]))
+                print('The row is then: ')
+                print(rows.iloc[[closest[tmp_cluster]]])
+                result = pd.concat([result, rows.iloc[[closest[tmp_cluster]]]], axis=0)
                 dataframe_y = dataframe_y[dataframe_y.tupleset != set]
 
         print('This is y after the cluster selection of the free tuples')
@@ -186,11 +196,9 @@ class Utility:
                 tmp_matrix = np.squeeze(np.asarray(tmp_matrix))
                 node_path = list()
                 dictionaries = list()
-
                 for index in range(len(tmp_matrix)):
                     if tmp_matrix[index] != 0:
                         node_path.append(index)
-
                         if features[index] != -2:
                             dictionary = {'column': headers[features[index]],
                                           'symbol': '',
