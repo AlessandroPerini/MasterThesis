@@ -11,15 +11,15 @@ from oneHotEncoding import OneHotEncoding
 
 class Utility:
 
-    tree_path = 'default.png'
+    tree_path = 'tree_PO_MinMost.png'
 
-    def tree_printer(self, classifier, dataframe_x, tree_path='default.png'):
+    def tree_printer(self, classifier, dataframe_x, tree_path=''):
         """
         :param classifier: variable in witch is built the decision tree
         :param features: headers of columns of dataframe x
         :return: nothing, it prints the png image with the tree
         """
-        if tree_path != 'default.png':
+        if tree_path != '':
             self.tree_path = tree_path
         try:
             features = list(dataframe_x.columns.values)
@@ -50,7 +50,7 @@ class Utility:
             print("Tree not printed!" + ve)
 
     @staticmethod
-    def important_nodes_generator(list_y, classifier, dataframe_x):
+    def important_nodes_generator(classifier, dataframe_x, list_y):
         applied = classifier.apply(dataframe_x)
         important_nodes = list()
         for elem in range(len(list_y)):
@@ -123,7 +123,7 @@ class Utility:
         :param dataframe_y: dataframe from which we want to select randomly the tuple of every set of free tuples
         :return: dataframe y only with positive tuples
         """
-        self.tree_path = 'treeRandom.png'
+        self.tree_path = 'tree_PR_Random.png'
         result = pd.DataFrame()
         for set_index in range(len(dataframe_y.tupleset.unique())):
             tmp = dataframe_y[(dataframe_y.tupleset == set_index)]
@@ -133,9 +133,7 @@ class Utility:
 
             result = pd.concat([result, tmp], axis=0)
 
-        # result = result.drop(axis=1, columns=["tupleset", "isfree"])
-        # Per ora non serve...
-        print('this is y after the random selection of the free tuples')
+        print('This is y after the random selection of the free tuples')
         print(result)
         return result
 
@@ -145,7 +143,7 @@ class Utility:
         :return: dataframe y only with positive tuples
         """
 
-        self.tree_path = 'treeCluster.png'
+        self.tree_path = 'tree_PR_Cluster.png'
         n_clusters = 3
         kmeans = KMeans(n_clusters=n_clusters).fit(dataframe_y)
         print('kmeans:')
@@ -279,13 +277,19 @@ class Utility:
             return x, y, list_y
 
     def most_important_node_first(self, classifier, x, y, list_y):
-        important_nodes = self.important_nodes_generator(list_y, classifier, x)
-        imp_index = 1
         result = pd.DataFrame()
         new_list_y = [0] * len(list_y)
         while 1 in y.isfree.tolist() or 0 in y.isfree.tolist():
-            most_important = collections.Counter(important_nodes).most_common(imp_index)[imp_index - 1][0]
-            imp_index += 1
+            y = y.loc[y.isfree != -1]
+            print('\n------------------------------------------------------------------------\n')
+            print(y)
+            x, y, temp_list_y = self.y_creator(x, y)
+            important_nodes = self.important_nodes_generator(classifier, x, temp_list_y)
+            print('Important nodes:')
+            print(important_nodes)
+            most_important = max(set(important_nodes), key=important_nodes.count)
+            print('Most important: ' + str(most_important))
+
             # Search for all the elements that are in the node 'c'
             for elem in range(y.shape[0]):
                 list_y_index = 0
@@ -298,7 +302,8 @@ class Utility:
                                 new_list_y[list_y_index] = 1
                             list_y_index += 1
                         result = pd.concat([result, y.iloc[[elem]]], axis=0)
-                        # for loop on the elements of the set to set the isfree column = -1
+
+                        # For-loop on the elements of the set in order to set the 'isfree' column = -1
                         for row in range(y.shape[0]):
                             if y.tupleset.iloc[row] == y.tupleset.iloc[elem]:
                                 y.isfree.iloc[row] = -1
@@ -371,7 +376,7 @@ class Utility:
                          children_right[i],
                          ))
         print(node_depth)
-        important_nodes = self.important_nodes_generator(list_y, classifier, dataframe_x)
+        important_nodes = self.important_nodes_generator(classifier, dataframe_x, list_y)
         altitude_of_important_nodes = [-1] * len(important_nodes)
         print('important nodes:')
         print(important_nodes)
