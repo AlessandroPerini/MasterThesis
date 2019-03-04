@@ -18,6 +18,7 @@ class DBConnection:
             self.connection = conn
             self.connected = True
             print('\n Database connected! \n')
+
         except ValueError as ve:
             print(ve)
             print("Connection problem!")

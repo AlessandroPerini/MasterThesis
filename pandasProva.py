@@ -1,4 +1,5 @@
-from utility import Utility
+import utility
+from resultsVisualization import tree_printer
 from databaseConnection import DBConnection
 from tabulate import tabulate
 from pandas import pandas
@@ -8,7 +9,8 @@ connection = DBConnection()
 connection.database_connection()
 query = "SELECT id, Age, Sex FROM censusdata limit 5"
 result = connection.query(query)
-print(tabulate(result,  tablefmt="fancy_grid"))      #https://pypi.org/project/tabulate/ per info su tabulate
+print(tabulate(result,  tablefmt="fancy_grid"))
+# https://pypi.org/project/tabulate/ per info su tabulate
 
 the_frame = pandas.DataFrame.from_dict(result)
 
@@ -26,4 +28,4 @@ classifier = tree.DecisionTreeClassifier()
 classifier.fit(the_frame[["id", "Age"]], the_frame["Sex"])
 print(classifier)
 
-Utility().tree_printer(tree, classifier, ["id", "Age"])
+tree_printer(utility.tree_path, tree, classifier, ["id", "Age"])
