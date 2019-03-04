@@ -2,6 +2,7 @@ import postProcessing
 import preProcessing
 import utility
 import resultsVisualization
+from fileWriter import FileWriter
 import oneHotEncoding
 from sklearn import tree
 import time
@@ -14,7 +15,7 @@ def test_a_priori_free_tuples_selection(x, y, tuples_selection_mode):
     resultsVisualization.tree_printer(classifier, x, tuples_selection_mode)
     explanations = resultsVisualization.path_finder(classifier, x, list_y)
     resultsVisualization.print_explanations_to_terminal(explanations)
-    return computation_time
+    return explanations, computation_time
 
 
 def test_all_free_tuples_selection(x,y):
@@ -65,18 +66,28 @@ def test_a_posteriori_free_tuples_selection(x, y, tuples_selection_mode):
     print(important_nodes)
     explanations = resultsVisualization.path_finder(classifier2, x, list_y)
     resultsVisualization.print_explanations_to_terminal(explanations)
-    return computation_time
+    return explanations, computation_time
 
 
-def test_all(x, y):
+def test_all(x, y, query_x, query_y):
 
-    time1 = test_a_priori_free_tuples_selection(x, y, 'r')
-    time2 = test_a_priori_free_tuples_selection(x, y, 'c')
-    time3 = test_a_posteriori_free_tuples_selection(x, y, 'min')
-    time4 = test_a_posteriori_free_tuples_selection(x, y, 'most')
+    explanations_list = list()
+    times_list = list()
+
+    expl1, time1 = test_a_priori_free_tuples_selection(x, y, 'r')
+    expl2, time2 = test_a_priori_free_tuples_selection(x, y, 'c')
+    expl3, time3 = test_a_posteriori_free_tuples_selection(x, y, 'min')
+    expl4, time4 = test_a_posteriori_free_tuples_selection(x, y, 'most')
+
+    explanations_list.extend((expl1, expl2, expl3, expl4))
+    times_list.extend((time1, time2, time3, time4))
 
     print('\n' + '_' * 30 + ' Methods Performances ' + '_' * 30)
     print('\nPR_Random: ' + str(time1))
     print('\nPR_Cluster: ' + str(time2))
     print('\nPO_Min: ' + str(time3))
     print('\nPO_Most: ' + str(time4))
+
+    file = FileWriter(query_x, query_y, y)
+    file.times_writer(times_list)
+    file.explanations_writer(explanations_list)

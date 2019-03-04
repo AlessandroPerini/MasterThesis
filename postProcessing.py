@@ -88,7 +88,7 @@ def min_altitude_first(dataframe_x, y, list_y, classifier):
             stack.append((children_right[node_id], parent_depth + 1))
         else:
             is_leaves[node_id] = True
-
+    """
     print("The binary tree structure has %s nodes and has "
           "the following tree structure:"
           % n_nodes)
@@ -105,7 +105,7 @@ def min_altitude_first(dataframe_x, y, list_y, classifier):
                      threshold[i],
                      children_right[i],
                      ))
-
+    """
     #print(node_depth)
     important_nodes = utility.important_nodes_generator(classifier, dataframe_x, list_y)
     altitude_of_important_nodes = [-1] * len(important_nodes)
