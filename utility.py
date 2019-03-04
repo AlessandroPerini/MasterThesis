@@ -47,6 +47,7 @@ def transform_y_to_all_results(dataframe_x, dataframe_results):
     :param dataframe_results: data frame of results that are visible to the user
     :return: y with all the tuples that have the attributes of dataframe_result also with columns 'isfree' and 'tupleset'
     """
+    dataframe_results = dataframe_results.drop_duplicates()
     result = pd.DataFrame()
     for row in range(dataframe_results.shape[0]):
         new_rows = dataframe_x

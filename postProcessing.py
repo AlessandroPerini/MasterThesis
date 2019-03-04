@@ -8,7 +8,7 @@ def most_important_node_first(classifier, x, y, list_y):
     new_list_y = [0] * len(list_y)
     while 1 in y.isfree.tolist() or 0 in y.isfree.tolist():
         y = y.loc[y.isfree != -1]
-        print('\n------------------------------------------------------------------------\n')
+        print('\n' + '_' * 100 + '\n')
         print(y)
         x, y, temp_list_y = utility.y_creator(x, y)
         important_nodes = utility.important_nodes_generator(classifier, x, temp_list_y)
@@ -106,21 +106,21 @@ def min_altitude_first(dataframe_x, y, list_y, classifier):
                      children_right[i],
                      ))
 
-    print(node_depth)
+    #print(node_depth)
     important_nodes = utility.important_nodes_generator(classifier, dataframe_x, list_y)
     altitude_of_important_nodes = [-1] * len(important_nodes)
-    print('important nodes:')
-    print(important_nodes)
-    print('altitude_of_important_nodes')
-    print(altitude_of_important_nodes)
+    #print('important nodes:')
+    #print(important_nodes)
+    #print('altitude_of_important_nodes')
+    #print(altitude_of_important_nodes)
     index = 0
     for important_node in important_nodes:
         altitude_of_important_nodes[index] = node_depth[important_node]
         index += 1
 
-    print('altitude_of_important_nodes')
-    print(altitude_of_important_nodes)
-    print(min(altitude_of_important_nodes))
+    #print('altitude_of_important_nodes')
+    #print(altitude_of_important_nodes)
+    #print(min(altitude_of_important_nodes))
     result = pd.DataFrame()
     new_list_y = [0] * len(list_y)
     while 1 in y.isfree.tolist() or 0 in y.isfree.tolist():
@@ -133,21 +133,21 @@ def min_altitude_first(dataframe_x, y, list_y, classifier):
 
             i += 1
 
-        print("min_altitude_index")
-        print(min_altitude_index)
+        #print("min_altitude_index")
+        #print(min_altitude_index)
         most_important = important_nodes[min_altitude_index]
-        print('most important node')
-        print(most_important)
+        #print('most important node')
+        #print(most_important)
         altitude_of_important_nodes[min_altitude_index] = 100
         # Search for all the elements that are in the node 'c'
         for elem in range(y.shape[0]):
             list_y_index = 0
             y_ref = 0
-            print('important_nodes[elem] =')
-            print(important_nodes[elem])
+            #print('important_nodes[elem] =')
+            #print(important_nodes[elem])
             if important_nodes[elem] == most_important:
-                print('elem=')
-                print(elem)
+                #print('elem=')
+                #print(elem)
                 if y.isfree.iloc[elem] == 1:
                     while y_ref != elem + 1:
                         if list_y[list_y_index] == 1:

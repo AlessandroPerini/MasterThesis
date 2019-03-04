@@ -142,7 +142,7 @@ def from_dictionaries_to_string(dictionaries):
 
 
 def print_explanations_to_terminal(explanations):
-    print("\n" + "------------------------------------------------------------" + "\n")
+    print('\n' + '_' * 100 + '\n')
     print("\n" + "List of explanations :" + "\n")
     for expl in explanations:
         print(expl)

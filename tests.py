@@ -7,13 +7,14 @@ from sklearn import tree
 import time
 
 
-def test_a_priori_free_tuples_selection(x, y):
+def test_a_priori_free_tuples_selection(x, y, tuples_selection_mode):
     classifier = tree.DecisionTreeClassifier()
-    x, y, list_y, tuples_selection_type = preProcessing.starter(x, y)
+    x, y, list_y, computation_time = preProcessing.starter(x, y, tuples_selection_mode)
     classifier.fit(x, list_y)
-    resultsVisualization.tree_printer(classifier, x, tuples_selection_type)
+    resultsVisualization.tree_printer(classifier, x, tuples_selection_mode)
     explanations = resultsVisualization.path_finder(classifier, x, list_y)
     resultsVisualization.print_explanations_to_terminal(explanations)
+    return computation_time
 
 
 def test_all_free_tuples_selection(x,y):
@@ -32,7 +33,7 @@ def test_all_free_tuples_selection(x,y):
     return classifier, x, y, list_y
 
 
-def test_a_posteriori_free_tuples_selection(x,y):
+def test_a_posteriori_free_tuples_selection(x, y, tuples_selection_mode):
     classifier, x, y, list_y = test_all_free_tuples_selection(x, y)
     applied = classifier.apply(x)
     important_nodes = list()
@@ -42,16 +43,14 @@ def test_a_posteriori_free_tuples_selection(x,y):
 
     print('Important nodes BEFORE:')
     print(important_nodes)
-
-    print('\nDo you prefer a min_altitude_first(min) approach or a most_important_node_firts(most) approach?')
-    selection = input()
     start = time.time()
-    if selection == 'min':
+    if tuples_selection_mode == 'min':
         classifier2, y, list_y = postProcessing.min_altitude_first(x, y, list_y, classifier)
     else:
         classifier2, y, list_y = postProcessing.most_important_node_first(classifier, x, y, list_y)
 
     end = time.time()
+    computation_time = end - start
     print('\nTime needed for \'post processing\': ' + str(end - start) + ' seconds\n')
     applied = classifier2.apply(x)
     print(y)
@@ -66,3 +65,18 @@ def test_a_posteriori_free_tuples_selection(x,y):
     print(important_nodes)
     explanations = resultsVisualization.path_finder(classifier2, x, list_y)
     resultsVisualization.print_explanations_to_terminal(explanations)
+    return computation_time
+
+
+def test_all(x, y):
+
+    time1 = test_a_priori_free_tuples_selection(x, y, 'r')
+    time2 = test_a_priori_free_tuples_selection(x, y, 'c')
+    time3 = test_a_posteriori_free_tuples_selection(x, y, 'min')
+    time4 = test_a_posteriori_free_tuples_selection(x, y, 'most')
+
+    print('\n' + '_' * 30 + ' Methods Performances ' + '_' * 30)
+    print('\nPR_Random: ' + str(time1))
+    print('\nPR_Cluster: ' + str(time2))
+    print('\nPO_Min: ' + str(time3))
+    print('\nPO_Most: ' + str(time4))

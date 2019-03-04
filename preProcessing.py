@@ -9,21 +9,17 @@ import oneHotEncoding
 import utility
 
 
-def starter(x, y):
+def starter(x, y, tuples_selection_mode):
     y = utility.transform_y_to_all_results(x, y)
     y = oneHotEncoding.encoder(y, x)
-    print('\nDo you prefer a random or a cluster choice of the free tuples? (r / c)')
-    random_cluster = input()
-    if random_cluster == 'r':
-        tuples_selection_type = 'r'
-        y = free_tuple_selection_random(y)
+    if tuples_selection_mode == 'r':
+        y, computation_time = free_tuple_selection_random(y)
     else:
-        tuples_selection_type = 'c'
-        y = free_tuple_selection_cluster(y)
+        y, computation_time = free_tuple_selection_cluster(y)
 
     x = oneHotEncoding.encoder(x, x)
     x, y, list_y = utility.y_creator(x, y)
-    return x, y, list_y, tuples_selection_type
+    return x, y, list_y, computation_time
 
 
 def free_tuple_selection_random(dataframe_y):
@@ -41,10 +37,11 @@ def free_tuple_selection_random(dataframe_y):
         result = pd.concat([result, tmp], axis=0)
 
     end = time.time()
-    print('\nTime needed to select random tuples: ' + str(end - start) + ' seconds\n')
+    computation_time = end - start
+    print('\nTime needed to select random tuples: ' + str(computation_time) + ' seconds\n')
     print('This is y after the random selection of the free tuples')
     print(result)
-    return result
+    return result, computation_time
 
 
 def free_tuple_selection_cluster(dataframe_y):
@@ -63,13 +60,13 @@ def free_tuple_selection_cluster(dataframe_y):
     result = pd.DataFrame()
     while dataframe_y.shape[0]:
         tmp_cluster = dataframe_y.cluster.mode().values[0]  # Takes the bigger cluster
-        print('\n' + '------------------------------------------------------------\n' + 'The bigger cluster is: ' + str(tmp_cluster))
+        print('\n' + '_' * 100 + '\n' + 'The bigger cluster is: ' + str(tmp_cluster))
         tmp = dataframe_y[(dataframe_y.cluster == tmp_cluster)]
         dataframe_y = dataframe_y[dataframe_y.cluster != tmp_cluster]
         for set in tmp.tupleset.unique():
             rows = tmp[tmp.tupleset == set]
             temp_rows = rows.drop(axis=1, columns=["cluster"])
-            print('\n' + '----------------------------------' + '\n' + 'rows:')
+            print('\n' + '_' * 100 + '\n' + 'rows:')
             print(temp_rows)
             closest = pairwise_distances_argmin(kmeans.cluster_centers_, temp_rows)
             # Returns for each element of x (center) the index of the nearest element of y (row)
@@ -80,10 +77,11 @@ def free_tuple_selection_cluster(dataframe_y):
             dataframe_y = dataframe_y[dataframe_y.tupleset != set]
 
     end = time.time()
-    print('\nTime needed to select tuples with clusters: ' + str(end - start) + ' seconds\n')
+    computation_time = end - start
+    print('\nTime needed to select tuples with clusters: ' + str(computation_time) + ' seconds\n')
     print('This is y after the cluster selection of the free tuples')
     print(result)
-    return result
+    return result, computation_time
 
 
 def knee_extractor(dataframe_y):
