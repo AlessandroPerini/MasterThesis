@@ -9,10 +9,10 @@ from collections import Counter
 
 connection = DBConnection()
 connection.database_connection()
-x = pd.DataFrame(connection.query("select age, sex , workclass, race, hoursperweek from censusdata where id < 1000"))
-y = pd.DataFrame(connection.query("select age, sex from censusdata where id = 3 or id = 5 or (id > 20 and id < 30)"))
+x = pd.DataFrame(connection.query("select age, sex , workclass, race, hoursperweek from censusdata where id < 40"))
+y = pd.DataFrame(connection.query("select age, sex from censusdata where id = 3 or id = 5 "))
 
-print('Do you prefer a-priori (pr) or a-posteriory (po) free tuples selectio?')
+print('\nDo you prefer a-priori (pr) or a-posteriory (po) free tuples selectio?')
 select = input()
 if select == 'pr':
     Tests().test_a_priori_free_tuples_selection(x, y)

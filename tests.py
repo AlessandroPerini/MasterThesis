@@ -1,6 +1,7 @@
 from oneHotEncoding import OneHotEncoding
 from sklearn import tree
 from utility import Utility
+import time
 
 
 class Tests:
@@ -44,13 +45,15 @@ class Tests:
         print(important_nodes)
         utility = Utility()
 
-        print('Do you prefer a min_altitude_first(min) approach or a most_important_node_firts(most) approach?')
+        print('\nDo you prefer a min_altitude_first(min) approach or a most_important_node_firts(most) approach?')
         selection = input()
+        start = time.time()
         if selection == 'min':
             classifier2, y, list_y = utility.min_altitude_first(x, y, list_y, classifier)
         else:
             classifier2, y, list_y = utility.most_important_node_first(classifier, x, y, list_y)
-
+        end = time.time()
+        print('\nTime needed for \'post processing\': ' + str(end - start) + ' seconds\n')
         applied = classifier2.apply(x)
         print(y)
         print(list_y)

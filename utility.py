@@ -7,7 +7,9 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import pairwise_distances_argmin
 import numpy as np
 from oneHotEncoding import OneHotEncoding
-
+import time
+import matplotlib.pyplot as plt
+from kneed import KneeLocator
 
 class Utility:
 
@@ -125,6 +127,7 @@ class Utility:
         """
         self.tree_path = 'tree_PR_Random.png'
         result = pd.DataFrame()
+        start = time.time()
         for set_index in range(len(dataframe_y.tupleset.unique())):
             tmp = dataframe_y[(dataframe_y.tupleset == set_index)]
 
@@ -133,6 +136,8 @@ class Utility:
 
             result = pd.concat([result, tmp], axis=0)
 
+        end = time.time()
+        print('\nTime needed to select random tuples: ' + str(end - start) + ' seconds\n')
         print('This is y after the random selection of the free tuples')
         print(result)
         return result
@@ -144,11 +149,12 @@ class Utility:
         """
 
         self.tree_path = 'tree_PR_Cluster.png'
-        n_clusters = 3
+        n_clusters = self.knee_extractor(dataframe_y)
+        print('\nThe best number of clusters is: ' + str(n_clusters) + '\n')
+        start = time.time()
         kmeans = KMeans(n_clusters=n_clusters).fit(dataframe_y)
-        print('kmeans:')
-        print(kmeans.cluster_centers_)
         dataframe_y['cluster'] = kmeans.labels_
+        print('\nDataframe y: ')
         print(dataframe_y)
         result = pd.DataFrame()
         while dataframe_y.shape[0]:
@@ -169,9 +175,32 @@ class Utility:
                 result = pd.concat([result, rows.iloc[[closest[tmp_cluster]]]], axis=0)
                 dataframe_y = dataframe_y[dataframe_y.tupleset != set]
 
+        end = time.time()
+        print('\nTime needed to select tuples with clusters: ' + str(end - start) + ' seconds\n')
         print('This is y after the cluster selection of the free tuples')
         print(result)
         return result
+
+    @staticmethod
+    def knee_extractor(dataframe_y):
+        sum_of_squared_distances = []
+        clusters = range(1, 11)
+        try:
+            for k in clusters:
+                km = KMeans(n_clusters=k).fit(dataframe_y)
+                sum_of_squared_distances.append(km.inertia_)
+
+            plt.plot(clusters, sum_of_squared_distances, 'bx-')
+            plt.xlabel('k')
+            plt.ylabel('Sum_of_squared_distances')
+            plt.title('Elbow Method For Optimal k')
+            plt.show()
+            best_k = KneeLocator(clusters, sum_of_squared_distances, curve='convex', direction='decreasing')
+
+        except ValueError:
+            return 2
+
+        return best_k.knee
 
     def path_finder(self, classifier, dataframe_x, list_y):
         """
@@ -264,9 +293,9 @@ class Utility:
 
 
     def preprocessing(self, x, y):
-            y = self.transform_y_to_all_results(x, y)  # transforms y so that it will have all the attributes as X
+            y = self.transform_y_to_all_results(x, y)
             y = OneHotEncoding().encoder(y, x)
-            print('do you prefer a random or a cluster choice of the free tuples? (r / c)')
+            print('\nDo you prefer a random or a cluster choice of the free tuples? (r / c)')
             random_cluster = input()
             if random_cluster == 'r':
                 y = self.free_tuple_selection_random(y)
