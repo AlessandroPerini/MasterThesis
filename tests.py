@@ -11,6 +11,7 @@ import time
 def test_a_priori_free_tuples_selection(x, y, tuples_selection_mode):
     classifier = tree.DecisionTreeClassifier()
     x, y, list_y, computation_time = preProcessing.starter(x, y, tuples_selection_mode)
+    #x.drop(axis=1, columns=['age', 'Male', 'Female'], inplace=True)
     classifier.fit(x, list_y)
     resultsVisualization.tree_printer(classifier, x, tuples_selection_mode)
     explanations = resultsVisualization.path_finder(classifier, x, list_y)
@@ -29,6 +30,8 @@ def test_all_free_tuples_selection(x,y):
     y = oneHotEncoding.encoder(y, x)
     x = oneHotEncoding.encoder(x, x)
     x, y, list_y = utility.y_creator(x, y)
+    #x.drop(axis=1, columns=['age', 'Male', 'Female'], inplace=True)
+    #y.drop(axis=1, columns=['age', 'Male', 'Female'], inplace=True)
     classifier.fit(x, list_y)
     resultsVisualization.tree_printer(classifier, x)
     return classifier, x, y, list_y
@@ -53,15 +56,10 @@ def test_a_posteriori_free_tuples_selection(x, y, tuples_selection_mode):
     end = time.time()
     computation_time = end - start
     print('\nTime needed for \'post processing\': ' + str(end - start) + ' seconds\n')
-    applied = classifier2.apply(x)
     print(y)
     print(list_y)
 
-    important_nodes = list()
-    for elem in range(len(list_y)):
-        if list_y[elem] != 0:
-            important_nodes.append(applied[elem])
-
+    important_nodes = utility.important_nodes_generator(classifier2, x, list_y)
     print('Important nodes AFTER:')
     print(important_nodes)
     explanations = resultsVisualization.path_finder(classifier2, x, list_y)

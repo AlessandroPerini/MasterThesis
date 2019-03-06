@@ -4,12 +4,12 @@ import pandas as pd
 
 connection = DBConnection()
 connection.database_connection()
-query_x = "select age, sex , workclass, race, hoursperweek from censusdata where id < 1000"
-query_y = "select age, sex from censusdata where id = 3 or id = 5 or (id > 40 and id < 60)"
+query_x = "select age, sex, education, workclass, race, hoursperweek, occupation, nativecountry from censusdata where id < 30"
+query_y = "select age, sex from censusdata where id = 3 or (id > 6 and id < 12)"
 x = pd.DataFrame(connection.query(query_x))
 y = pd.DataFrame(connection.query(query_y))
 
-print('\nDo you want to compare all the methods?')
+print('\nDo you want to compare all the methods? (y/n)')
 select = input()
 if select == 'y':
     tests.test_all(x, y, query_x, query_y)
