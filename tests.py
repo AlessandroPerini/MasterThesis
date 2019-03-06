@@ -3,6 +3,8 @@ import preProcessing
 import utility
 import resultsVisualization
 from fileWriter import FileWriter
+from collections import Counter
+import pandas as pd
 import oneHotEncoding
 from sklearn import tree
 import time
@@ -65,6 +67,26 @@ def test_a_posteriori_free_tuples_selection(x, y, tuples_selection_mode):
     explanations = resultsVisualization.path_finder(classifier2, x, list_y)
     resultsVisualization.print_explanations_to_terminal(explanations)
     return explanations, computation_time
+
+
+def test_all_free_tuples_combinations(x, y):
+
+    y = utility.transform_y_to_all_results(x, y)
+    results = list()
+    results.append(pd.DataFrame())
+    n_freesets = y.tupleset.unique().tolist()
+    for set in n_freesets:
+        result_temp = list()
+        y_rows = y[y.tupleset == set]
+        temp_results = len(results)
+        for num_of_df in range(temp_results):
+            for row in range(y_rows.shape[0]):
+                k = pd.concat([results[num_of_df], y_rows.iloc[[row]]], axis=0)
+                result_temp.append(k)
+
+        results = result_temp
+
+    print(results)
 
 
 def test_all(x, y, query_x, query_y):
