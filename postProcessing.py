@@ -114,15 +114,22 @@ def min_altitude_first(x, y, list_y, classifier):
     while 1 in y.isfree.tolist() or 0 in y.isfree.tolist():
         y = y.loc[y.isfree != -1]
         x, y, list_y = utility.y_creator(x, y)
+        important_nodes = utility.important_nodes_generator(classifier, x, list_y)
+        altitude_of_important_nodes = [-1] * len(important_nodes)
+        index = 0
+        for important_node in important_nodes:
+            altitude_of_important_nodes[index] = node_depth[important_node]
+            index += 1
         min_altitude = min(altitude_of_important_nodes)
         min_altitude_index = None
         i = 0
+        print('inizio while')
         while min_altitude_index == None:
             if altitude_of_important_nodes[i] == min_altitude:
                 min_altitude_index = i
             i += 1
+        print('fine while')
         most_important = important_nodes[min_altitude_index]
-        altitude_of_important_nodes[min_altitude_index] = 100
         # Search for all the elements that are in the node 'c'
         for elem in range(y.shape[0]):
             list_y_index = 0
