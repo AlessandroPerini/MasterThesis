@@ -4,14 +4,11 @@ import pandas as pd
 
 connection = DBConnection()
 connection.database_connection()
-query_x = "select age, sex, education, workclass, race, hoursperweek, occupation, nativecountry from censusdata where id < 100"
+query_x = "select age, sex, education, workclass, race, hoursperweekfrom censusdata where id < 1000"
 query_y = "select age, sex from censusdata where id = 3 or (id > 6 and id < 12) or id = 88"
 x = pd.DataFrame(connection.query(query_x))
 y = pd.DataFrame(connection.query(query_y))
 
-tests.test_all_free_tuples_combinations(x, y)
-
-"""
 print('\nDo you want to compare all the methods? (y/n)')
 select = input()
 if select == 'y':
@@ -40,5 +37,5 @@ else:
         tuples_selection_mode = 'most'
 
     tests.test_a_posteriori_free_tuples_selection(x, y, tuples_selection_mode)
-"""
+
 connection.close_connection()
