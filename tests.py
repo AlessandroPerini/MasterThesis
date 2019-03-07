@@ -60,8 +60,8 @@ def test_a_posteriori_free_tuples_selection(x, y, tuples_selection_mode):
     print('\nTime needed for \'post processing\': ' + str(end - start) + ' seconds\n')
     print(y)
     print(list_y)
-
     important_nodes = utility.important_nodes_generator(classifier2, x, list_y)
+    resultsVisualization.tree_printer(classifier, x, '', important_nodes)
     print('Important nodes AFTER:')
     print(important_nodes)
     explanations = resultsVisualization.path_finder(classifier2, x, list_y)
