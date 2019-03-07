@@ -46,7 +46,7 @@ def most_important_node_first(classifier, x, y, list_y):
                 y.isfree.iloc[elem] = -1
 
     result = result.drop(axis=1, columns=["isfree"])
-    return classifier, result, new_list_y
+    return result, new_list_y
 
 
 def min_altitude_first(x, y, list_y, classifier):
@@ -100,12 +100,10 @@ def min_altitude_first(x, y, list_y, classifier):
         min_altitude = min(altitude_of_important_nodes)
         min_altitude_index = None
         i = 0
-        print('inizio while')
-        while min_altitude_index == None:
+        while min_altitude_index is None:
             if altitude_of_important_nodes[i] == min_altitude:
                 min_altitude_index = i
             i += 1
-        print('fine while')
         most_important = important_nodes[min_altitude_index]
         # Search for all the elements that are in the node 'c'
         for elem in range(y.shape[0]):
@@ -135,4 +133,4 @@ def min_altitude_first(x, y, list_y, classifier):
                 y.isfree.iloc[elem] = -1
 
     result = result.drop(axis=1, columns=["isfree"])
-    return classifier, result, new_list_y
+    return result, new_list_y

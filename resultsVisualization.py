@@ -14,7 +14,9 @@ def tree_printer(classifier, dataframe_x, tuples_selection_type='', important_no
     """
 
     switcher = {
-        '': "tree_PO_MinMost.png",
+        '': "tree_PO_Default.png",
+        'most': "tree_PO_Most.png",
+        'min': "tree_PO_Min.png",
         'c': "tree_PR_Cluster.png",
         'r': "tree_PR_Random.png"
     }

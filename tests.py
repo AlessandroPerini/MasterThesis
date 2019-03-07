@@ -51,20 +51,21 @@ def test_a_posteriori_free_tuples_selection(x, y, tuples_selection_mode):
     print(important_nodes)
     start = time.time()
     if tuples_selection_mode == 'min':
-        classifier2, y, list_y = postProcessing.min_altitude_first(x, y, list_y, classifier)
+        y, list_y = postProcessing.min_altitude_first(x, y, list_y, classifier)
     else:
-        classifier2, y, list_y = postProcessing.most_important_node_first(classifier, x, y, list_y)
+        tuples_selection_mode = 'most'
+        y, list_y = postProcessing.most_important_node_first(classifier, x, y, list_y)
 
     end = time.time()
     computation_time = end - start
     print('\nTime needed for \'post processing\': ' + str(end - start) + ' seconds\n')
     print(y)
     print(list_y)
-    important_nodes = utility.important_nodes_generator(classifier2, x, list_y)
-    resultsVisualization.tree_printer(classifier, x, '', important_nodes)
+    important_nodes = utility.important_nodes_generator(classifier, x, list_y)
+    resultsVisualization.tree_printer(classifier, x, tuples_selection_mode, important_nodes)
     print('Important nodes AFTER:')
     print(important_nodes)
-    explanations = resultsVisualization.path_finder(classifier2, x, list_y)
+    explanations = resultsVisualization.path_finder(classifier, x, list_y)
     resultsVisualization.print_explanations_to_terminal(explanations)
     return explanations, computation_time
 
