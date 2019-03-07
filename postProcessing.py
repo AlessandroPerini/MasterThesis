@@ -67,11 +67,6 @@ def min_altitude_first(x, y, list_y, classifier):
     n_nodes = classifier.tree_.node_count
     children_left = classifier.tree_.children_left
     children_right = classifier.tree_.children_right
-    feature = classifier.tree_.feature
-    threshold = classifier.tree_.threshold
-
-    # The tree structure can be traversed to compute various properties such
-    # as the depth of each node and whether or not it is a leaf.
     node_depth = np.zeros(shape=n_nodes, dtype=np.int64)
     is_leaves = np.zeros(shape=n_nodes, dtype=bool)
     stack = [(0, -1)]  # seed is the root node id and its parent depth
@@ -85,24 +80,6 @@ def min_altitude_first(x, y, list_y, classifier):
             stack.append((children_right[node_id], parent_depth + 1))
         else:
             is_leaves[node_id] = True
-    """
-    print("The binary tree structure has %s nodes and has "
-          "the following tree structure:"
-          % n_nodes)
-    for i in range(n_nodes):
-        if is_leaves[i]:
-            print("%snode=%s leaf node." % (node_depth[i] * "\t", i))
-        else:
-            print("%snode=%s test node: go to node %s if X[:, %s] <= %s else to "
-                  "node %s."
-                  % (node_depth[i] * "\t",
-                     i,
-                     children_left[i],
-                     feature[i],
-                     threshold[i],
-                     children_right[i],
-                     ))
-    """
     important_nodes = utility.important_nodes_generator(classifier, x, list_y)
     altitude_of_important_nodes = [-1] * len(important_nodes)
     index = 0
