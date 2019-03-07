@@ -4,7 +4,7 @@ import numpy as np
 from sklearn import tree
 
 
-def tree_printer(classifier, dataframe_x, tuples_selection_type=''):
+def tree_printer(classifier, dataframe_x, tuples_selection_type='', important_nodes=[]):
     """
 
     :param classifier: variable in which is built the decision tree
@@ -41,6 +41,9 @@ def tree_printer(classifier, dataframe_x, tuples_selection_type=''):
             for i in range(2):
                 dest = graph.get_node(str(edges[edge][i]))[0]
                 dest.set_fillcolor(colors[i])
+                if len(important_nodes) > 0:
+                    if int(dest.get_label().split("#")[1].split("\\")[0]) in important_nodes:
+                        dest.set_fillcolor('green')
 
         graph.write_png(path)
         print("Tree " + path + " printed!")
