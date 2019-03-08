@@ -1,0 +1,3 @@
+Albero con due foglie prese (min/most):
+query_x = "select * from censusdata where id < 100"
+query_y = "select age, sex from censusdata where id = 3 or (id > 6 and id < 30) or id = 88"

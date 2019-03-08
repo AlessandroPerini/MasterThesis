@@ -18,6 +18,7 @@ def test_a_priori_free_tuples_selection(x, y, tuples_selection_mode):
     resultsVisualization.tree_printer(classifier, x, tuples_selection_mode)
     explanations = resultsVisualization.path_finder(classifier, x, list_y)
     resultsVisualization.print_explanations_to_terminal(explanations)
+    print(utility.tree_purity_calculator(classifier, x, list_y))
     return explanations, computation_time
 
 

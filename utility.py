@@ -1,5 +1,7 @@
 import pandas as pd
-
+import collections
+import pydotplus
+from sklearn import tree
 
 def important_nodes_generator(classifier, dataframe_x, list_y):
     applied = classifier.apply(dataframe_x)
@@ -68,3 +70,32 @@ def transform_y_to_all_results(dataframe_x, dataframe_results):
     print('\nThis is y:')
     print(result)
     return result
+
+
+def tree_purity_calculator(classifier, dataframe_x, list_y):
+    important_nodes = important_nodes_generator(classifier, dataframe_x, list_y)
+    important_nodes = set(important_nodes)
+    left_count = 0
+    right_count = 0
+    features = list(dataframe_x.columns.values)
+    dot_data = tree.export_graphviz(classifier,
+                                    feature_names=features,
+                                    out_file=None,
+                                    filled=True,
+                                    rounded=True,
+                                    node_ids=True)
+    graph = pydotplus.graph_from_dot_data(dot_data)
+    edges = collections.defaultdict(list)
+
+    for edge in graph.get_edge_list():
+        edges[edge.get_source()].append(int(edge.get_destination()))
+
+    for edge in edges:
+        edges[edge].sort()
+        for i in range(2):
+            dest = graph.get_node(str(edges[edge][i]))[0]
+            if int(dest.get_label().split("#")[1].split("\\")[0]) in important_nodes:
+                left_count += int(dest.get_label().split("[")[1].split(',')[0])
+                right_count += int(dest.get_label().split(", ")[1].split(']')[0])
+
+    return 100 * right_count / (left_count + right_count)
