@@ -9,10 +9,16 @@ query_y = "select age, sex from censusdata where id = 3 or (id > 6 and id < 30) 
 x = pd.DataFrame(connection.query(query_x))
 y = pd.DataFrame(connection.query(query_y))
 
+print('\nInput the max tree depth (None = 0): ')
+select = input()
+max_depth = int(select)
+if(max_depth == 0):
+    max_depth = None
+
 print('\nDo you want to compare all the methods? (y/n)')
 select = input()
 if select == 'y':
-    tests.test_all(x, y, query_x, query_y)
+    tests.test_all(x, y, query_x, query_y, max_depth)
     exit()
 
 print('\nDo you prefer a-priori (pr) or a-posteriory (po) free tuples selection?')
@@ -26,7 +32,7 @@ if select == 'pr':
     else:
         tuples_selection_mode = 'r'
 
-    tests.test_a_priori_free_tuples_selection(x, y, tuples_selection_mode)
+    tests.test_a_priori_free_tuples_selection(x, y, tuples_selection_mode, max_depth)
 
 else:
     print('\nDo you prefer a min_altitude_first(min) approach or a most_important_node_firts(most) approach?')
@@ -36,6 +42,6 @@ else:
     else:
         tuples_selection_mode = 'most'
 
-    tests.test_a_posteriori_free_tuples_selection(x, y, tuples_selection_mode)
+    tests.test_a_posteriori_free_tuples_selection(x, y, tuples_selection_mode, max_depth)
 
 connection.close_connection()

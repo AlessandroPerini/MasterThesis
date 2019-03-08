@@ -151,3 +151,11 @@ def print_explanations_to_terminal(explanations):
     print("\n" + "List of explanations :" + "\n")
     for expl in explanations:
         print(expl)
+
+
+def features_to_terminal(method_name, time, purity, height, number_imp_nodes):
+    print('\n' + '_' * 30 + ' Performances ' + '_' * 30)
+    print('\nTime needed: ' + str(time))
+    print('\nPurity : ' + str(purity) + ' %')
+    print('\nHeight: ' + str(height))
+    print('\nNumber of important nodes: ' + str(number_imp_nodes))
