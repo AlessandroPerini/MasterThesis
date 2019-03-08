@@ -70,3 +70,15 @@ class FileWriter:
         f.write('\nPO_Min: ' + str(n_imp_nodes[2]))
         f.write('\nPO_Most: ' + str(n_imp_nodes[3]))
         self.f.close()
+
+    def best_method_writer(self, best_method, best_parameter):
+        f = open(self.path, "a+")
+        f.write('\n\n' + '_' * 30 + ' Best Method Selection ' + '_' * 30 + '\n')
+        if best_method == 0:
+            f.write('\nThe best method is Random and its parameter is: ' + str(best_parameter))
+        if best_method == 1:
+            f.write('\nThe best method is Cluster and its parameter is: ' + str(best_parameter))
+        if best_method == 2:
+            f.write('\nThe best method is Minimum Height first and its parameter is: ' + str(best_parameter))
+        elif best_method == 3:
+            f.write('\nThe best method is Most important node first and its parameter is: ' + str(best_parameter))
