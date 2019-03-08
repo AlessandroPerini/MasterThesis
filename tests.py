@@ -111,10 +111,21 @@ def test_all(x, y, query_x, query_y, max_depth):
     purities_list.extend((purity1, purity2, purity3, purity4))
     heights_list.extend((height1, height2, height3, height4))
     numbers_imp_nodes_list.extend((n_imp_nodes1, n_imp_nodes2, n_imp_nodes3, n_imp_nodes4))
+    weighted_parameters = list()
 
+    for i in range(len(heights_list)):
+        weighted_parameters.append((heights_list[i]+numbers_imp_nodes_list[i]) / (purities_list[i]/100))
+
+    best_parameter = min(weighted_parameters)
+    index = 0
+    for weighted_parameter in weighted_parameters:
+        if weighted_parameter == best_parameter:
+            best_method = index
+        index += 1
     file = FileWriter(query_x, query_y, y)
     file.times_writer(times_list)
     file.explanations_writer(explanations_list)
     file.purity_writer(purities_list)
     file.heights_writer(heights_list)
     file.number_important_nodes_writer(numbers_imp_nodes_list)
+    file.best_method_writer(best_method, best_parameter)
