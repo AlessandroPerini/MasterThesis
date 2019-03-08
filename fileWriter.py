@@ -61,3 +61,12 @@ class FileWriter:
         f.write('\nPO_Min: ' + str(heights[2]))
         f.write('\nPO_Most: ' + str(heights[3]))
         self.f.close()
+
+    def number_important_nodes_writer(self, n_imp_nodes):
+        f = open(self.path, "a+")
+        f.write('\n\n' + '_' * 30 + ' Methods Number of Important Nodes ' + '_' * 30 + '\n')
+        f.write('\nPR_Random: ' + str(n_imp_nodes[0]))
+        f.write('\nPR_Cluster: ' + str(n_imp_nodes[1]))
+        f.write('\nPO_Min: ' + str(n_imp_nodes[2]))
+        f.write('\nPO_Most: ' + str(n_imp_nodes[3]))
+        self.f.close()

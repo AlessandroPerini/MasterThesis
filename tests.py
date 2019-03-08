@@ -17,10 +17,8 @@ def test_a_priori_free_tuples_selection(x, y, tuples_selection_mode):
     resultsVisualization.tree_printer(classifier, x, tuples_selection_mode)
     explanations = resultsVisualization.path_finder(classifier, x, list_y)
     resultsVisualization.print_explanations_to_terminal(explanations)
-    purity = utility.tree_purity_calculator(classifier, x, list_y)
-    heights = utility.heights_of_important_nodes(classifier, list_y, x)
-    tree_height = max(heights[0])
-    return explanations, computation_time, purity, tree_height
+    purity, tree_height, n_imp_nodes = utility.tree_features_calculator(classifier, x, list_y)
+    return explanations, computation_time, purity, tree_height, n_imp_nodes
 
 
 def test_all_free_tuples_selection(x,y):
@@ -69,10 +67,8 @@ def test_a_posteriori_free_tuples_selection(x, y, tuples_selection_mode):
     print(important_nodes)
     explanations = resultsVisualization.path_finder(classifier, x, list_y)
     resultsVisualization.print_explanations_to_terminal(explanations)
-    purity = utility.tree_purity_calculator(classifier, x, list_y)
-    heights = utility.heights_of_important_nodes(classifier, list_y, x)
-    tree_height = max(heights[0])
-    return explanations, computation_time, purity, tree_height
+    purity, tree_height, n_imp_nodes = utility.tree_features_calculator(classifier, x, list_y)
+    return explanations, computation_time, purity, tree_height, n_imp_nodes
 
 
 def test_all_free_tuples_combinations(x, y):
@@ -101,16 +97,18 @@ def test_all(x, y, query_x, query_y):
     times_list = list()
     purities_list = list()
     heights_list = list()
+    numbers_imp_nodes_list = list()
 
-    expl1, time1, purity1, height1 = test_a_priori_free_tuples_selection(x, y, 'r')
-    expl2, time2, purity2, height2 = test_a_priori_free_tuples_selection(x, y, 'c')
-    expl3, time3, purity3, height3 = test_a_posteriori_free_tuples_selection(x, y, 'min')
-    expl4, time4, purity4, height4 = test_a_posteriori_free_tuples_selection(x, y, 'most')
+    expl1, time1, purity1, height1, n_imp_nodes1 = test_a_priori_free_tuples_selection(x, y, 'r')
+    expl2, time2, purity2, height2, n_imp_nodes2 = test_a_priori_free_tuples_selection(x, y, 'c')
+    expl3, time3, purity3, height3, n_imp_nodes3 = test_a_posteriori_free_tuples_selection(x, y, 'min')
+    expl4, time4, purity4, height4, n_imp_nodes4 = test_a_posteriori_free_tuples_selection(x, y, 'most')
 
     explanations_list.extend((expl1, expl2, expl3, expl4))
     times_list.extend((time1, time2, time3, time4))
     purities_list.extend((purity1, purity2, purity3, purity4))
     heights_list.extend((height1, height2, height3, height4))
+    numbers_imp_nodes_list.extend((n_imp_nodes1, n_imp_nodes2, n_imp_nodes3, n_imp_nodes4))
 
     print('\n' + '_' * 30 + ' Methods Performances ' + '_' * 30)
     print('\nPR_Random: ' + str(time1))
@@ -123,3 +121,4 @@ def test_all(x, y, query_x, query_y):
     file.explanations_writer(explanations_list)
     file.purity_writer(purities_list)
     file.heights_writer(heights_list)
+    file.number_important_nodes_writer(numbers_imp_nodes_list)

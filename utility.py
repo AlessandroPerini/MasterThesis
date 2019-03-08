@@ -73,7 +73,7 @@ def transform_y_to_all_results(dataframe_x, dataframe_results):
     return result
 
 
-def tree_purity_calculator(classifier, x, list_y):
+def tree_features_calculator(classifier, x, list_y):
     important_nodes = important_nodes_generator(classifier, x, list_y)
     important_nodes = set(important_nodes)
     left_count = 0
@@ -103,7 +103,8 @@ def tree_purity_calculator(classifier, x, list_y):
     _, important_nodes_heights = heights_of_important_nodes(classifier, list_y, x)
     max_height = max(important_nodes_heights)
     purity = 100 * right_count / (left_count + right_count)
-    return purity, max_height
+    number_important_nodes = len(set(important_nodes))
+    return purity, max_height, number_important_nodes
 
 
 def heights_of_important_nodes(classifier, list_y, x):
