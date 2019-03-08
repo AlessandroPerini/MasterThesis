@@ -3,7 +3,6 @@ import preProcessing
 import utility
 import resultsVisualization
 from fileWriter import FileWriter
-from collections import Counter
 import pandas as pd
 import oneHotEncoding
 from sklearn import tree
@@ -18,7 +17,8 @@ def test_a_priori_free_tuples_selection(x, y, tuples_selection_mode):
     resultsVisualization.tree_printer(classifier, x, tuples_selection_mode)
     explanations = resultsVisualization.path_finder(classifier, x, list_y)
     resultsVisualization.print_explanations_to_terminal(explanations)
-    return explanations, computation_time
+    purity, tree_height, n_imp_nodes = utility.tree_features_calculator(classifier, x, list_y)
+    return explanations, computation_time, purity, tree_height, n_imp_nodes
 
 
 def test_all_free_tuples_selection(x,y):
@@ -51,22 +51,24 @@ def test_a_posteriori_free_tuples_selection(x, y, tuples_selection_mode):
     print(important_nodes)
     start = time.time()
     if tuples_selection_mode == 'min':
-        classifier2, y, list_y = postProcessing.min_altitude_first(x, y, list_y, classifier)
+        y, list_y = postProcessing.min_altitude_first(x, y, list_y, classifier)
     else:
-        classifier2, y, list_y = postProcessing.most_important_node_first(classifier, x, y, list_y)
+        tuples_selection_mode = 'most'
+        y, list_y = postProcessing.most_important_node_first(classifier, x, y, list_y)
 
     end = time.time()
     computation_time = end - start
     print('\nTime needed for \'post processing\': ' + str(end - start) + ' seconds\n')
     print(y)
     print(list_y)
-    important_nodes = utility.important_nodes_generator(classifier2, x, list_y)
-    resultsVisualization.tree_printer(classifier, x, '', important_nodes)
+    important_nodes = utility.important_nodes_generator(classifier, x, list_y)
+    resultsVisualization.tree_printer(classifier, x, tuples_selection_mode, important_nodes)
     print('Important nodes AFTER:')
     print(important_nodes)
-    explanations = resultsVisualization.path_finder(classifier2, x, list_y)
+    explanations = resultsVisualization.path_finder(classifier, x, list_y)
     resultsVisualization.print_explanations_to_terminal(explanations)
-    return explanations, computation_time
+    purity, tree_height, n_imp_nodes = utility.tree_features_calculator(classifier, x, list_y)
+    return explanations, computation_time, purity, tree_height, n_imp_nodes
 
 
 def test_all_free_tuples_combinations(x, y):
@@ -93,14 +95,20 @@ def test_all(x, y, query_x, query_y):
 
     explanations_list = list()
     times_list = list()
+    purities_list = list()
+    heights_list = list()
+    numbers_imp_nodes_list = list()
 
-    expl1, time1 = test_a_priori_free_tuples_selection(x, y, 'r')
-    expl2, time2 = test_a_priori_free_tuples_selection(x, y, 'c')
-    expl3, time3 = test_a_posteriori_free_tuples_selection(x, y, 'min')
-    expl4, time4 = test_a_posteriori_free_tuples_selection(x, y, 'most')
+    expl1, time1, purity1, height1, n_imp_nodes1 = test_a_priori_free_tuples_selection(x, y, 'r')
+    expl2, time2, purity2, height2, n_imp_nodes2 = test_a_priori_free_tuples_selection(x, y, 'c')
+    expl3, time3, purity3, height3, n_imp_nodes3 = test_a_posteriori_free_tuples_selection(x, y, 'min')
+    expl4, time4, purity4, height4, n_imp_nodes4 = test_a_posteriori_free_tuples_selection(x, y, 'most')
 
     explanations_list.extend((expl1, expl2, expl3, expl4))
     times_list.extend((time1, time2, time3, time4))
+    purities_list.extend((purity1, purity2, purity3, purity4))
+    heights_list.extend((height1, height2, height3, height4))
+    numbers_imp_nodes_list.extend((n_imp_nodes1, n_imp_nodes2, n_imp_nodes3, n_imp_nodes4))
 
     print('\n' + '_' * 30 + ' Methods Performances ' + '_' * 30)
     print('\nPR_Random: ' + str(time1))
@@ -111,3 +119,6 @@ def test_all(x, y, query_x, query_y):
     file = FileWriter(query_x, query_y, y)
     file.times_writer(times_list)
     file.explanations_writer(explanations_list)
+    file.purity_writer(purities_list)
+    file.heights_writer(heights_list)
+    file.number_important_nodes_writer(numbers_imp_nodes_list)

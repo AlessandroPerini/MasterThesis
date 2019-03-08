@@ -43,3 +43,30 @@ class FileWriter:
             f.write(expl + '\n')
 
         self.f.close()
+
+    def purity_writer(self, purities):
+        f = open(self.path, "a+")
+        f.write('\n\n' + '_' * 30 + ' Methods Purities ' + '_' * 30 + '\n')
+        f.write('\nPR_Random: ' + str(purities[0]) + ' %')
+        f.write('\nPR_Cluster: ' + str(purities[1]) + ' %')
+        f.write('\nPO_Min: ' + str(purities[2]) + ' %')
+        f.write('\nPO_Most: ' + str(purities[3]) + ' %')
+        self.f.close()
+
+    def heights_writer(self, heights):
+        f = open(self.path, "a+")
+        f.write('\n\n' + '_' * 30 + ' Methods Max Heights ' + '_' * 30 + '\n')
+        f.write('\nPR_Random: ' + str(heights[0]))
+        f.write('\nPR_Cluster: ' + str(heights[1]))
+        f.write('\nPO_Min: ' + str(heights[2]))
+        f.write('\nPO_Most: ' + str(heights[3]))
+        self.f.close()
+
+    def number_important_nodes_writer(self, n_imp_nodes):
+        f = open(self.path, "a+")
+        f.write('\n\n' + '_' * 30 + ' Methods Number of Important Nodes ' + '_' * 30 + '\n')
+        f.write('\nPR_Random: ' + str(n_imp_nodes[0]))
+        f.write('\nPR_Cluster: ' + str(n_imp_nodes[1]))
+        f.write('\nPO_Min: ' + str(n_imp_nodes[2]))
+        f.write('\nPO_Most: ' + str(n_imp_nodes[3]))
+        self.f.close()
