@@ -95,7 +95,6 @@ def tree_features_calculator(classifier, x, list_y):
         edges[edge].sort()
         for i in range(2):
             dest = graph.get_node(str(edges[edge][i]))[0]
-            print(dest.get_label())
             if int(dest.get_label().split("#")[1].split("\\")[0]) in important_nodes:
                 left_count += int(dest.get_label().split("[")[1].split(',')[0])
                 right_count += int(dest.get_label().split(", ")[1].split(']')[0])
