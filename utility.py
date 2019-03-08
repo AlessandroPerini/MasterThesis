@@ -74,6 +74,22 @@ def transform_y_to_all_results(dataframe_x, dataframe_results):
 
 
 def tree_features_calculator(classifier, x, list_y):
+    """
+    The purity value indicates if the IEQ ('OR' of important nodes queries) is exact.
+    If the value is 100%, then the IEQ is exact, i.e. it contains all an only the tuples
+    of the input 'result'. Otherwise it contains also tuples that are not in the result,
+    and the final IEQ must be considered approximated.
+
+    N.B: +++ Function to be fixed!!! +++
+        The impurity value is not correctly calculated if the value is below 100%.
+        This because maybe some 'unwanted' tuples (left value of value=[1,1] in a leaf node)
+        is in a wanted free set.
+
+    :param classifier:
+    :param x:
+    :param list_y:
+    :return:
+    """
     important_nodes = important_nodes_generator(classifier, x, list_y)
     important_nodes = set(important_nodes)
     left_count = 0
