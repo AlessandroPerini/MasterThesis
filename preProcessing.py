@@ -3,6 +3,7 @@ from random import randint
 import pandas as pd
 from kneed import KneeLocator
 from matplotlib import pyplot as plt
+from matplotlib.pyplot import show
 from sklearn.cluster import KMeans
 from sklearn.metrics import pairwise_distances_argmin
 import oneHotEncoding
@@ -92,11 +93,14 @@ def knee_extractor(dataframe_y):
             km = KMeans(n_clusters=k).fit(dataframe_y)
             sum_of_squared_distances.append(km.inertia_)
 
-        plt.plot(clusters, sum_of_squared_distances, 'bx-')
-        plt.xlabel('k')
-        plt.ylabel('Sum_of_squared_distances')
-        plt.title('Elbow Method For Optimal k')
-        plt.show()
+        # De-comment to see the 'Elbow' plot
+        #
+        # plt.plot(clusters, sum_of_squared_distances, 'bx-')
+        # plt.xlabel('k')
+        # plt.ylabel('Sum_of_squared_distances')
+        # plt.title('Elbow Method For Optimal k')
+        # plt.show()
+
         best_k = KneeLocator(clusters, sum_of_squared_distances, curve='convex', direction='decreasing')
 
     except ValueError:
