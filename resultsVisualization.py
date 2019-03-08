@@ -55,7 +55,7 @@ def tree_printer(classifier, dataframe_x, tuples_selection_type='', important_no
                 if len(important_nodes) > 0:
                     if int(dest.get_label().split("#")[1].split("\\")[0]) in important_nodes:
                         dest.set_fillcolor('green')
-
+        print(classifier.tree_.feature)
         graph.write_png(path)
         print("Tree " + path + " printed!")
 
