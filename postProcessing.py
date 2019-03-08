@@ -1,6 +1,6 @@
-import numpy as np
 import pandas as pd
 import utility
+from utility import heights_of_important_nodes
 
 
 def most_important_node_first(classifier, x, y, list_y):
@@ -64,28 +64,7 @@ def min_altitude_first(x, y, list_y, classifier):
     #   - feature, feature used for splitting the node
     #   - threshold, threshold value at the node
 
-    n_nodes = classifier.tree_.node_count
-    children_left = classifier.tree_.children_left
-    children_right = classifier.tree_.children_right
-    node_depth = np.zeros(shape=n_nodes, dtype=np.int64)
-    is_leaves = np.zeros(shape=n_nodes, dtype=bool)
-    stack = [(0, -1)]  # seed is the root node id and its parent depth
-    while len(stack) > 0:
-        node_id, parent_depth = stack.pop()
-        node_depth[node_id] = parent_depth + 1
-
-        # If we have a test node
-        if children_left[node_id] != children_right[node_id]:
-            stack.append((children_left[node_id], parent_depth + 1))
-            stack.append((children_right[node_id], parent_depth + 1))
-        else:
-            is_leaves[node_id] = True
-    important_nodes = utility.important_nodes_generator(classifier, x, list_y)
-    altitude_of_important_nodes = [-1] * len(important_nodes)
-    index = 0
-    for important_node in important_nodes:
-        altitude_of_important_nodes[index] = node_depth[important_node]
-        index += 1
+    node_depth, _ = heights_of_important_nodes(classifier, list_y, x)
     result = pd.DataFrame()
     new_list_y = [0] * len(list_y)
     while 1 in y.isfree.tolist() or 0 in y.isfree.tolist():

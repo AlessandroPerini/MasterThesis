@@ -43,3 +43,21 @@ class FileWriter:
             f.write(expl + '\n')
 
         self.f.close()
+
+    def purity_writer(self, purities):
+        f = open(self.path, "a+")
+        f.write('\n\n' + '_' * 30 + ' Methods Purities ' + '_' * 30 + '\n')
+        f.write('\nPR_Random: ' + str(purities[0]) + ' %')
+        f.write('\nPR_Cluster: ' + str(purities[1]) + ' %')
+        f.write('\nPO_Min: ' + str(purities[2]) + ' %')
+        f.write('\nPO_Most: ' + str(purities[3]) + ' %')
+        self.f.close()
+
+    def heights_writer(self, heights):
+        f = open(self.path, "a+")
+        f.write('\n\n' + '_' * 30 + ' Methods Max Heights ' + '_' * 30 + '\n')
+        f.write('\nPR_Random: ' + str(heights[0]))
+        f.write('\nPR_Cluster: ' + str(heights[1]))
+        f.write('\nPO_Min: ' + str(heights[2]))
+        f.write('\nPO_Most: ' + str(heights[3]))
+        self.f.close()
