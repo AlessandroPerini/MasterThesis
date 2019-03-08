@@ -12,7 +12,7 @@ y = pd.DataFrame(connection.query(query_y))
 print('\nInput the max tree depth (None = 0): ')
 select = input()
 max_depth = int(select)
-if(max_depth == 0):
+if max_depth == 0:
     max_depth = None
 
 print('\nDo you want to compare all the methods? (y/n)')
