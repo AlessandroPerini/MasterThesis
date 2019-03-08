@@ -38,11 +38,20 @@ def tree_printer(classifier, dataframe_x, tuples_selection_type='', important_no
         for edge in graph.get_edge_list():
             edges[edge.get_source()].append(int(edge.get_destination()))
 
+        leaves = list()
+        features = classifier.tree_.feature
+        for i in range(len(features)):
+            if features[i] == -2:
+                leaves.append(i)
+
         for edge in edges:
             edges[edge].sort()
             for i in range(2):
                 dest = graph.get_node(str(edges[edge][i]))[0]
-                dest.set_fillcolor(colors[i])
+                dest.set_fillcolor('turquoise')
+                if (int(dest.get_label().split(", ")[1].split(']')[0]) != 0) and (
+                            int(dest.get_label().split("#")[1].split("\\")[0]) in leaves):
+                    dest.set_fillcolor('yellow')
                 if len(important_nodes) > 0:
                     if int(dest.get_label().split("#")[1].split("\\")[0]) in important_nodes:
                         dest.set_fillcolor('green')
