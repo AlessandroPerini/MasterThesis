@@ -4,8 +4,8 @@ import pandas as pd
 
 connection = DBConnection()
 connection.database_connection()
-query_x = "select age, sex, hoursperweek, race from censusdata where id < 1000"
-query_y = "select age, sex from censusdata where id = 3 or id= 5 or id= 15 or (id>250 and id <260)"
+query_x = "select * from censusdata where id < 10000"
+query_y = "select age, sex from censusdata where maritalstatus = 'Divorced' and age <34"
 x = pd.DataFrame(connection.query(query_x))
 y = pd.DataFrame(connection.query(query_y))
 

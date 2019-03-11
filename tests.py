@@ -114,7 +114,7 @@ def test_all(x, y, query_x, query_y, max_depth):
     weighted_parameters = list()
 
     for i in range(len(heights_list)):
-        weighted_parameters.append((heights_list[i]+numbers_imp_nodes_list[i]) / (purities_list[i]/100))
+        weighted_parameters.append((heights_list[i]+numbers_imp_nodes_list[i]*1.2) / (purities_list[i]/100))
 
     best_parameter = min(weighted_parameters)
     index = 0

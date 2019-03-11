@@ -23,7 +23,7 @@ def encoder(data_frame, referred_data_frame):
             if referred_data_frame[column].dtype == np.int64:
                 result = pd.concat([result, temp_df], axis=1)
             else:
-                if len(referred_data_frame[column].unique()) <= 5:
+                if len(referred_data_frame[column].unique()) <= 20:
                     new_columns = one_hot_encoding(referred_data_frame[column])
                     if temp.equals(referred_data_frame) == 0:
                         for temp_column in list(new_columns.columns.values):
