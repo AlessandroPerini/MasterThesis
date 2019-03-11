@@ -1,3 +1,28 @@
+________________________________________________________________________________________________________________________
+
 Albero con due foglie prese (min/most):
 query_x = "select * from censusdata where id < 100"
 query_y = "select age, sex from censusdata where id = 3 or (id > 6 and id < 30) or id = 88"
+
+________________________________________________________________________________________________________________________
+
+Explanation diversa dalla query originale.
+Coinvolge 'occupation', 'age'
+
+query_originale = "SELECT * FROM censusdata where relationship = "Husband" and education = "HS-grad" and hoursperweek > 70 and nativecountry = "Mexico"
+Query x: select age, workclass, education, maritalstatus, occupation, relationship, race, sex, capitalgain, capitalloss, hoursperweek, nativecountry, income from censusdata
+Query y: SELECT age, workclass, education, maritalstatus, occupation, relationship, race, sex, capitalgain, capitalloss, hoursperweek, nativecountry, income FROM censusdata where id in(8120, 32321, 32333)
+
+Methods Performances:
+PR_Random: 0.0 seconds
+PR_Cluster: 0.7187290191650391 seconds
+PO_Min: 154.60786604881287 seconds
+PO_Most: 145.2990119457245 seconds
+
+Explanation:
+Self-emp-not-inc > 0.5 and hoursperweek > 71.0 and <=50K <= 0.5 and Transport-moving > 0.5 and age <= 37.0 and Craft-repair <= 0.5
+Craft-repair > 0.5 and hoursperweek > 71.0 and hoursperweek <= 73.5 and age > 35.5 and age <= 38.0
+Craft-repair > 0.5 and hoursperweek > 71.0 and hoursperweek <= 73.5 and age <= 29.0
+
+________________________________________________________________________________________________________________________
+

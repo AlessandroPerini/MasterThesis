@@ -4,8 +4,10 @@ import pandas as pd
 
 connection = DBConnection()
 connection.database_connection()
-query_x = "select * from censusdata where id < 10000"
-query_y = "select age, sex from censusdata where maritalstatus = 'Divorced' and age <34"
+# age, workclass, education, maritalstatus, occupation, relationship, race, sex, capitalgain, capitalloss, hoursperweek, nativecountry, income
+
+query_x = "select age, workclass, education, maritalstatus, occupation, relationship, race, sex, capitalgain, capitalloss, hoursperweek, nativecountry, income from censusdata where id > 32000"
+query_y = "SELECT age, workclass FROM censusdata where id in(32321, 32333)"
 x = pd.DataFrame(connection.query(query_x))
 y = pd.DataFrame(connection.query(query_y))
 
