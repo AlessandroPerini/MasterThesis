@@ -121,13 +121,12 @@ def min_altitude_first(x, y, list_y, classifier):
             altitude_of_important_nodes[index] = node_depth[important_node]
             index += 1
         min_altitude = min(altitude_of_important_nodes)
-        min_altitude_index = None
-        i = 0
-        while min_altitude_index is None:
+        min_altitude_nodes = list()
+        for i in range(len(altitude_of_important_nodes)):
             if altitude_of_important_nodes[i] == min_altitude:
-                min_altitude_index = i
-            i += 1
-        most_important = important_nodes[min_altitude_index]
+                min_altitude_nodes.append(important_nodes[i])
+
+        most_important = max(set(min_altitude_nodes), key=min_altitude_nodes.count)
         # Search for all the elements that are in the node 'c'
         for elem in range(y.shape[0]):
             list_y_index = 0
