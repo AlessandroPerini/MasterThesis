@@ -6,7 +6,8 @@ from utility import heights_of_important_nodes
 def most_important_node_first(classifier, x, y, list_y):
     result = pd.DataFrame()
     new_list_y = [0] * len(list_y)
-    while 0 in y.isfree.tolist():
+    var = y.isfree.tolist()
+    while 0 in var:
         y = y.loc[y.isfree != -1]
         print('\n' + '_' * 100 + '\n')
         print(y)
@@ -14,23 +15,22 @@ def most_important_node_first(classifier, x, y, list_y):
         important_nodes = utility.important_nodes_generator(classifier, x, list_y)
         print('Important nodes:')
         print(important_nodes)
-        most_important = max(set(important_nodes), key=important_nodes.count)
-        print('Most important: ' + str(most_important))
-
         # Search for all the elements that are in the node 'c'
         for elem in range(y.shape[0]):
             list_y_index = 0
             y_list_ones_count = 0
-            if important_nodes[elem] == most_important:
-                if y.isfree.iloc[elem] == 0:
-                    while y_list_ones_count != elem + 1:
-                        if list_y[list_y_index] == 1:
-                            y_list_ones_count += 1
-                        list_y_index += 1
-                    new_list_y[list_y_index-1] = 1
-                    result = pd.concat([result, y.iloc[[elem]]], axis=0)
+            if y.isfree.iloc[elem] == 0:
+                while y_list_ones_count != elem + 1:
+                    if list_y[list_y_index] == 1:
+                        y_list_ones_count += 1
+                    list_y_index += 1
+                new_list_y[list_y_index - 1] = 1
+                result = pd.concat([result, y.iloc[[elem]]], axis=0)
                 y.isfree.iloc[elem] = -1
+        var = y.isfree.tolist()
     while 1 in y.isfree.tolist():
+        print('la y.isfree.tolist() è:')
+        print(y.isfree.tolist())
         y = y.loc[y.isfree != -1]
         print('\n' + '_' * 100 + '\n')
         print(y)
@@ -38,7 +38,20 @@ def most_important_node_first(classifier, x, y, list_y):
         important_nodes = utility.important_nodes_generator(classifier, x, list_y)
         print('Important nodes:')
         print(important_nodes)
-        most_important = max(set(important_nodes), key=important_nodes.count)
+        count_free_tuple_set_per_node = list()
+        for important_node in important_nodes:
+            different_free_sets = set()
+            for elem in range(y.shape[0]):
+                if important_nodes[elem] == important_node:
+                    if y.isfree.iloc[elem] == 1:
+                        different_free_sets.add(y.tupleset.iloc[elem])
+            count_free_tuple_set_per_node.append(different_free_sets)
+        most_important_index = 0
+        for i in range(len(count_free_tuple_set_per_node)):
+            if len(count_free_tuple_set_per_node[i]) >= len(count_free_tuple_set_per_node[most_important_index]):
+                most_important_index = i
+
+        most_important = important_nodes[most_important_index]
         print('Most important: ' + str(most_important))
 
         # Search for all the elements that are in the node 'c'
@@ -81,36 +94,28 @@ def min_altitude_first(x, y, list_y, classifier):
     node_depth, _ = heights_of_important_nodes(classifier, list_y, x)
     result = pd.DataFrame()
     new_list_y = [0] * len(list_y)
-    while 0 in y.isfree.tolist():
+    var = y.isfree.tolist()
+    while 0 in var:
         y = y.loc[y.isfree != -1]
+        print('\n' + '_' * 100 + '\n')
+        print(y)
         x, y, list_y = utility.y_creator(x, y)
         important_nodes = utility.important_nodes_generator(classifier, x, list_y)
-        altitude_of_important_nodes = [-1] * len(important_nodes)
-        index = 0
-        for important_node in important_nodes:
-            altitude_of_important_nodes[index] = node_depth[important_node]
-            index += 1
-        min_altitude = min(altitude_of_important_nodes)
-        min_altitude_index = None
-        i = 0
-        while min_altitude_index is None:
-            if altitude_of_important_nodes[i] == min_altitude:
-                min_altitude_index = i
-            i += 1
-        most_important = important_nodes[min_altitude_index]
+        print('Important nodes:')
+        print(important_nodes)
+        # Search for all the elements that are in the node 'c'
         for elem in range(y.shape[0]):
             list_y_index = 0
             y_list_ones_count = 0
-            if important_nodes[elem] == most_important:
-                if y.isfree.iloc[elem] == 0:
-                    while y_list_ones_count != elem + 1:
-                        if list_y[list_y_index] == 1:
-                            y_list_ones_count += 1
-                        list_y_index += 1
-                    new_list_y[list_y_index - 1] = 1
-                    result = pd.concat([result, y.iloc[[elem]]], axis=0)
+            if y.isfree.iloc[elem] == 0:
+                while y_list_ones_count != elem + 1:
+                    if list_y[list_y_index] == 1:
+                        y_list_ones_count += 1
+                    list_y_index += 1
+                new_list_y[list_y_index - 1] = 1
+                result = pd.concat([result, y.iloc[[elem]]], axis=0)
                 y.isfree.iloc[elem] = -1
-
+        var = y.isfree.tolist()
     while 1 in y.isfree.tolist():
         y = y.loc[y.isfree != -1]
         x, y, list_y = utility.y_creator(x, y)
