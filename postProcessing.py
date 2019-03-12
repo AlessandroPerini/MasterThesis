@@ -6,28 +6,41 @@ from utility import heights_of_important_nodes
 def most_important_node_first(classifier, x, y, list_y):
     result = pd.DataFrame()
     new_list_y = [0] * len(list_y)
-    var = y.isfree.tolist()
-    while 0 in var:
-        y = y.loc[y.isfree != -1]
-        print('\n' + '_' * 100 + '\n')
-        print(y)
-        x, y, list_y = utility.y_creator(x, y)
-        important_nodes = utility.important_nodes_generator(classifier, x, list_y)
-        print('Important nodes:')
-        print(important_nodes)
-        # Search for all the elements that are in the node 'c'
-        for elem in range(y.shape[0]):
+    important_nodes = utility.important_nodes_generator(classifier, x, list_y)
+
+    # Search for all the elements that are in the node 'c'
+    for elem in range(y.shape[0]):
+        list_y_index = 0
+        y_list_ones_count = 0
+        if y.isfree.iloc[elem] == 0:
+            important_node_taken = important_nodes[elem]
+            while y_list_ones_count != elem + 1:
+                if list_y[list_y_index] == 1:
+                    y_list_ones_count += 1
+
+                list_y_index += 1
+
+            new_list_y[list_y_index - 1] = 1
+            result = pd.concat([result, y.iloc[[elem]]], axis=0)
+            y.isfree.iloc[elem] = -1
             list_y_index = 0
             y_list_ones_count = 0
-            if y.isfree.iloc[elem] == 0:
-                while y_list_ones_count != elem + 1:
-                    if list_y[list_y_index] == 1:
-                        y_list_ones_count += 1
-                    list_y_index += 1
-                new_list_y[list_y_index - 1] = 1
-                result = pd.concat([result, y.iloc[[elem]]], axis=0)
-                y.isfree.iloc[elem] = -1
-        var = y.isfree.tolist()
+            for node_index in range(len(important_nodes)):
+                if important_nodes[node_index] == important_node_taken:
+                    while y_list_ones_count != node_index + 1:
+                        if list_y[list_y_index] == 1:
+                            y_list_ones_count += 1
+
+                        list_y_index += 1
+
+                    new_list_y[list_y_index - 1] = 1
+                    if y.isfree.iloc[node_index] == 1:
+                        for row in range(y.shape[0]):
+                            if y.tupleset.iloc[row] == y.tupleset.iloc[node_index]:
+                                y.isfree.iloc[row] = -1
+
+                    y.isfree.iloc[node_index] = -1
+
     while 1 in y.isfree.tolist():
         print('la y.isfree.tolist() è:')
         print(y.isfree.tolist())
@@ -72,7 +85,12 @@ def most_important_node_first(classifier, x, y, list_y):
                         if y.tupleset.iloc[row] == y.tupleset.iloc[elem]:
                             y.isfree.iloc[row] = -1
                 y.isfree.iloc[elem] = -1
-
+    count = 0
+    for i in new_list_y:
+        if i == 1:
+            count += 1
+    print('il count di risultati presi (che dovrebbe essere uguale ai diversi free sets) è=')
+    print(count)
     result = result.drop(axis=1, columns=["isfree"])
     return result, new_list_y
 
@@ -94,28 +112,41 @@ def min_altitude_first(x, y, list_y, classifier):
     node_depth, _ = heights_of_important_nodes(classifier, list_y, x)
     result = pd.DataFrame()
     new_list_y = [0] * len(list_y)
-    var = y.isfree.tolist()
-    while 0 in var:
-        y = y.loc[y.isfree != -1]
-        print('\n' + '_' * 100 + '\n')
-        print(y)
-        x, y, list_y = utility.y_creator(x, y)
-        important_nodes = utility.important_nodes_generator(classifier, x, list_y)
-        print('Important nodes:')
-        print(important_nodes)
-        # Search for all the elements that are in the node 'c'
-        for elem in range(y.shape[0]):
+    important_nodes = utility.important_nodes_generator(classifier, x, list_y)
+
+    # Search for all the elements that are in the node 'c'
+    for elem in range(y.shape[0]):
+        list_y_index = 0
+        y_list_ones_count = 0
+        if y.isfree.iloc[elem] == 0:
+            important_node_taken = important_nodes[elem]
+            while y_list_ones_count != elem + 1:
+                if list_y[list_y_index] == 1:
+                    y_list_ones_count += 1
+
+                list_y_index += 1
+
+            new_list_y[list_y_index - 1] = 1
+            result = pd.concat([result, y.iloc[[elem]]], axis=0)
+            y.isfree.iloc[elem] = -1
             list_y_index = 0
             y_list_ones_count = 0
-            if y.isfree.iloc[elem] == 0:
-                while y_list_ones_count != elem + 1:
-                    if list_y[list_y_index] == 1:
-                        y_list_ones_count += 1
-                    list_y_index += 1
-                new_list_y[list_y_index - 1] = 1
-                result = pd.concat([result, y.iloc[[elem]]], axis=0)
-                y.isfree.iloc[elem] = -1
-        var = y.isfree.tolist()
+            for node_index in range(len(important_nodes)):
+                if important_nodes[node_index] == important_node_taken:
+                    while y_list_ones_count != node_index + 1:
+                        if list_y[list_y_index] == 1:
+                            y_list_ones_count += 1
+
+                        list_y_index += 1
+
+                    new_list_y[list_y_index - 1] = 1
+                    if y.isfree.iloc[node_index] == 1:
+                        for row in range(y.shape[0]):
+                            if y.tupleset.iloc[row] == y.tupleset.iloc[node_index]:
+                                y.isfree.iloc[row] = -1
+
+                    y.isfree.iloc[node_index] = -1
+
     while 1 in y.isfree.tolist():
         y = y.loc[y.isfree != -1]
         x, y, list_y = utility.y_creator(x, y)
@@ -151,4 +182,12 @@ def min_altitude_first(x, y, list_y, classifier):
                             y.isfree.iloc[row] = -1
                     y.isfree.iloc[elem] = -1
     result = result.drop(axis=1, columns=["isfree"])
+    print('new_list_y')
+    print(new_list_y)
+    count = 0
+    for i in new_list_y:
+        if i == 1:
+            count += 1
+    print('il count di risultati presi (che dovrebbe essere uguale ai diversi free sets) è=')
+    print(count)
     return result, new_list_y
