@@ -23,7 +23,8 @@ def encoder(data_frame, referred_data_frame):
             if referred_data_frame[column].dtype == np.int64:
                 result = pd.concat([result, temp_df], axis=1)
             else:
-                if len(referred_data_frame[column].unique()) <= 20:
+                max_distinct_values_of_a_categorical_column = 45
+                if len(referred_data_frame[column].unique()) <= max_distinct_values_of_a_categorical_column:
                     new_columns = one_hot_encoding(referred_data_frame[column])
                     if temp.equals(referred_data_frame) == 0:
                         for temp_column in list(new_columns.columns.values):
@@ -37,7 +38,8 @@ def encoder(data_frame, referred_data_frame):
         if temp.equals(referred_data_frame) == 0:
             result = pd.concat([result, data_frame.tupleset], axis=1)
             result = pd.concat([result, data_frame.isfree], axis=1)
-
+        print('dopo onehotencoding')
+        print(result)
         return result
 
     except ValueError as ve:
@@ -53,7 +55,10 @@ def one_hot_encoding(column):
     """
 
     try:
+
         column_names = column.unique()
+        for col in column_names:
+            col = str(column) + col
         encoder = preprocessing.OneHotEncoder(categories=[column_names])
         result = pd.DataFrame(encoder.fit_transform(pd.DataFrame(column)).toarray())
         result.columns = column_names

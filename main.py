@@ -6,8 +6,8 @@ connection = DBConnection()
 connection.database_connection()
 # age, workclass, education, maritalstatus, occupation, relationship, race, sex, capitalgain, capitalloss, hoursperweek, nativecountry, income
 
-query_x = "select age, workclass, education, maritalstatus, occupation, relationship, race, sex, capitalgain, capitalloss, hoursperweek, nativecountry, income from censusdata where id <1000"
-query_y = "SELECT age, workclass FROM censusdata where id in(30, 32, 33, 34, 35, 36, 37, 38, 39, 40)"
+query_x = "select age, workclass, education, maritalstatus, occupation, relationship, race, sex, capitalgain, capitalloss, hoursperweek, nativecountry, income from censusdata where occupation='Sales'"
+query_y = "select age, workclass, education, maritalstatus, occupation, relationship, race, sex, capitalgain, capitalloss, hoursperweek, nativecountry, income from censusdata where id=13163 or id=6635"
 x = pd.DataFrame(connection.query(query_x))
 y = pd.DataFrame(connection.query(query_y))
 
