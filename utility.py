@@ -80,10 +80,15 @@ def tree_features_calculator(classifier, x, list_y):
     of the input 'result'. Otherwise it contains also tuples that are not in the result,
     and the final IEQ must be considered approximated.
 
-    N.B: +++ Function to be fixed!!! +++
+    N.B.1: +++ Function to be fixed!!! +++
         The impurity value is not correctly calculated if the value is below 100%.
         This because maybe some 'unwanted' tuples (left value of value=[1,1] in a leaf node)
-        is in a wanted free set.
+        are in a wanted free set.
+
+    N.B.2: +++ Enhancement +++
+        When the function that prunes nodes discarding some tuples from the result will
+        be implemented, it can be useful to indicate, beside the purity,
+        also if there are extra or fewer tuples in the result.
 
     :param classifier:
     :param x:
