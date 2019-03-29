@@ -4,6 +4,8 @@
 
 _This repository hosts the code of the algorithm implemented for our Master Thesis. We called it "EXPLORER" (EXPLanation Oriented query Reverse EngineeRing) since it aims at finding explanations of query answers using query reverse engineering_
 
+- [**Here are present all the results of our Experimental Study**](https://www.dropbox.com/s/pp9g1y73z1kct2r/tests_results.zip?dl=0)
+
 The following is the _Thesis Abstract_
 
 In this thesis we will discuss the problem of finding possible injections
@@ -42,6 +44,5 @@ user is interested in having it. Moreover, the tool can also be used
 as a simple query reverse engineering method to infer equivalent
 queries. This allows our method to be useful for several purposes.
 
-- [**Here are present all the results of our Experimental Study**](https://www.dropbox.com/s/pp9g1y73z1kct2r/tests_results.zip?dl=0)
 
 _[Alessandro Perini](https://github.com/perini93), [Andrea Pasquali](https://github.com/AndreaPasquali)_       
