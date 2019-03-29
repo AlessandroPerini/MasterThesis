@@ -1,7 +1,7 @@
 # MasterThesis
 EXPLanation Oriented query Reverse EngineeRing (EXPLORER)
 
-![logo](https://imgur.com/NZ63rQm)
+![logo](https://i.imgur.com/NZ63rQm.png)
 
 This is the code of the EXPLORER algorithm implemented for our Master Thesis.
 
