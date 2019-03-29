@@ -2,7 +2,7 @@
 
 ![logo](https://i.imgur.com/NZ63rQm.png)
 
-_This repository host the code of the algorithm implemented for our Master Thesis. We called it EXPLORER since it aims at finding explanations of query answers using query reverse engineering_
+_This repository hosts the code of the algorithm implemented for our Master Thesis. We called it "EXPLORER" (EXPLanation Oriented query Reverse EngineeRing) since it aims at finding explanations of query answers using query reverse engineering_
 
 The following is the _Thesis Abstract_
 
