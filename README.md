@@ -2,9 +2,9 @@
 
 ![logo](https://i.imgur.com/NZ63rQm.png)
 
-This repository host the code of the EXPLORER algorithm implemented for our Master Thesis.
+_This repository host the code of the algorithm implemented for our Master Thesis. We called it EXPLORER since it aims at finding explanations of query answers using query reverse engineering_
 
-THESIS ABSTRACT
+The following is the _Thesis Abstract_
 
 In this thesis we will discuss the problem of finding possible injections
 of unethical principles in database data extractions. Querying
